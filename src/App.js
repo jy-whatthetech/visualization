@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { BarGraph } from "./Demo";
+import { default as Example } from "./Network";
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <BarGraph />
+        <Example />
       </header>
     </div>
   );

@@ -8,11 +8,13 @@
     "@testing-library/user-event": "^7.2.1",
     "@vx/group": "0.0.198",
     "@vx/mock-data": "0.0.198",
+    "@vx/network": "0.0.198",
     "@vx/scale": "0.0.198",
     "@vx/shape": "0.0.198",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.3"
+    "react-scripts": "3.4.3",
+    "typescript": "^4.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
