@@ -10,7 +10,7 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <Example />
+        <Example width={500} height={500}/>
       </header>
     </div>
   );

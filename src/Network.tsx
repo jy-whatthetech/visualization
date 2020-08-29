@@ -4,6 +4,7 @@ import { Graph } from '@vx/network';
 export type NetworkProps = {
   width: number;
   height: number;
+  nodes?: any[];
 };
 
 const nodes = [
