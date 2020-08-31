@@ -1,17 +1,18 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { default as Example } from "./Network";
 
-function parseInputValue(text) {
-  //Do something to update node state
-}
-
 function App() {
   const [inputValue, setInputValue] = React.useState("placeholder text");
+  const [numNodes, setNumNodes] = React.useState(3);
 
   React.useEffect(() => {
     //TODO:
+    const parsed = parseInt(inputValue, 10);
+    if (!isNaN(parsed)) {
+      setNumNodes(parsed);
+    }
+
     console.log("input value changed");
   }, [inputValue]);
 
@@ -32,7 +33,7 @@ function App() {
           }}
         />
       </form>
-      <Example width={500} height={500} />
+      <Example width={500} height={500} numNodes={numNodes} />
     </div>
   );
 }
