@@ -21,25 +21,25 @@ function App() {
 
   React.useEffect(() => {
     if (!inputValue) return;
-    console.log("input value changed");
-    console.log(inputValue);
 
-    // TODO: ERROR HANDLING
-    const parsedValue = ParseUtils.parsePairs(inputValue);
-
-    console.log("parsed value");
-    console.log(parsedValue);
+    let parsedValue: any;
+    try {
+      parsedValue = ParseUtils.parsePairs(inputValue);
+    } catch (ex) {
+      console.error(ex);
+      return;
+    }
 
     const tempNodes: Array<any> = [];
 
     for (let nodeId of Array.from(parsedValue.nodeSet)) {
-      let x = Utils.randomInRange(10, 800);
-      let y = Utils.randomInRange(10, 600);
+      let x = Utils.randomInRange(10, 400);
+      let y = Utils.randomInRange(10, 300);
       tempNodes.push({ id: nodeId, x: x, y: y });
     }
 
-    parsedValue.nodes = tempNodes;
     console.log(parsedValue);
+    parsedValue.nodes = tempNodes;
     setData(parsedValue);
   }, [inputValue]);
 
