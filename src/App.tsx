@@ -3,6 +3,7 @@ import "./App.css";
 import Graph from "./graph/Graph";
 import * as ParseUtils from "./parser/parseUtils";
 import * as Utils from "./utils/utils";
+import { InputType, getLabel } from "./parser/inputTypes";
 
 function App() {
   const [inputValue, setInputValue] = React.useState("");
@@ -24,7 +25,7 @@ function App() {
 
     let parsedValue: any;
     try {
-      parsedValue = ParseUtils.parseAdjacencyList(inputValue);
+      parsedValue = ParseUtils.parseAdjacencyList({ input: inputValue });
     } catch (ex) {
       console.error(ex);
       return;
@@ -45,9 +46,20 @@ function App() {
 
   return (
     <>
-      [[2,1],[3,1],[1,4]] <br />
+      [[2,1],[3,1],[1,4]]
+      <br />
       [[1],[],[0,5],[],[1,3,0],[0]]
+      <br />
       <form>
+        <label>Choose an input type:</label>
+        <select>
+          {Object.keys(InputType)
+            .filter(k => typeof InputType[k as any] !== "number")
+            .map(key => (
+              <option value={key}>{getLabel(parseInt(key))}</option>
+            ))}
+        </select>
+        <br />
         <label>
           Graph Input:
           <textarea

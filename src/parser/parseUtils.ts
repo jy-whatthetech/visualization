@@ -1,6 +1,12 @@
 // directed pairs
 // [[2,1],[3,1],[1,4]]
-export function parsePairs(input: string, directed = true): any {
+export function parsePairs(config: {
+  input: string;
+  directed?: boolean;
+  weighted?: boolean;
+}): any {
+  let { input, directed, weighted } = config;
+
   // trim whitespace
   input = input.trim();
   if (input.length < 2) throw new Error("Input too short");
@@ -52,11 +58,13 @@ function getDirectedPair(s: string, nodeSet: Set<string>) {
 
 // adjacency list
 // array where arr[i] is an array of adjacent nodes
-export function parseAdjacencyList(
-  input: string,
-  directed = true,
-  oneIndexed = false
-): any {
+export function parseAdjacencyList(config: {
+  input: string;
+  directed?: boolean;
+  oneIndexed?: boolean;
+}): any {
+  let { input, directed, oneIndexed } = config;
+
   // trim whitespace
   input = input.trim();
   if (input.length < 2) throw new Error("Input too short");
@@ -110,5 +118,5 @@ function parseArray(s: string, nodeSet: Set<string>): any[] {
   return rtn;
 }
 
-// adjacency array
-// array where arr[i] is an array of adjacent nodes
+// adjacency matrix
+// n x n binary matrix where arr[i][j] means there is a connection between i and j
