@@ -7,6 +7,8 @@ import { InputType, getLabel } from "./parser/inputTypes";
 
 function App() {
   const [inputValue, setInputValue] = React.useState("");
+  const [comboValue, setComboValue] = React.useState(0);
+
   // graph payload (with minimalist structure)
   const [data, setData] = React.useState({
     nodes: [
@@ -25,7 +27,7 @@ function App() {
 
     let parsedValue: any;
     try {
-      parsedValue = ParseUtils.parseAdjacencyList({ input: inputValue });
+      parsedValue = ParseUtils.processInput(inputValue, comboValue);
     } catch (ex) {
       console.error(ex);
       return;
@@ -34,8 +36,8 @@ function App() {
     const tempNodes: Array<any> = [];
 
     for (let nodeId of Array.from(parsedValue.nodeSet)) {
-      let x = Utils.randomInRange(10, 400);
-      let y = Utils.randomInRange(10, 300);
+      let x = Utils.randomInRange(10, 800);
+      let y = Utils.randomInRange(10, 600);
       tempNodes.push({ id: nodeId, x: x, y: y });
     }
 
@@ -52,7 +54,11 @@ function App() {
       <br />
       <form>
         <label>Choose an input type:</label>
-        <select>
+        <select
+          onChange={e => {
+            setComboValue(parseInt(e.target.value));
+          }}
+        >
           {Object.keys(InputType)
             .filter(k => typeof InputType[k as any] !== "number")
             .map(key => (

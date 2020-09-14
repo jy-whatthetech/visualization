@@ -32,7 +32,8 @@ export function getLabel(type: number) {
   }
 }
 
-export function getTypeConfig(type: InputType) {
+// TODO: Add ability to specify own nodes
+export function getTypeConfig(type: InputType): any {
   const config = {
     inputType: type,
     weighted: false,

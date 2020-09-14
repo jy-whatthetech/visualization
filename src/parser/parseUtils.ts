@@ -1,3 +1,29 @@
+import { InputType, getTypeConfig } from "./inputTypes";
+
+export function processInput(input: string, type: number): any {
+  const config = getTypeConfig(type);
+  config.input = input;
+
+  switch (type) {
+    case InputType.EdgePairs:
+    case InputType.WeightedEdgePairs:
+      return parsePairs(config);
+    case InputType.AdjacencyList:
+    case InputType.AdjacencyList1Ind:
+      return parseAdjacencyList(config);
+    case InputType.AdjacencyMatrix:
+      return "Adjacency Matrix";
+    case InputType.BinaryTree:
+      return "Binary Tree";
+    case InputType.GraphObject:
+      return "Graph Object";
+    case InputType.AncestorGraph:
+      return "Ancestor Graph";
+    default:
+      break;
+  }
+}
+
 // directed pairs
 // [[2,1],[3,1],[1,4]]
 export function parsePairs(config: {
