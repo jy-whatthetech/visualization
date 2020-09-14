@@ -1,12 +1,14 @@
 import React from "react";
 import { Graph as D3Graph } from "react-d3-graph";
+import { InputType, getTypeConfig } from "../parser/inputTypes";
 
 type GraphProps = {
+  inputType: number;
   data: any;
   id: string;
 };
 
-const Graph = ({ data, id = "graph-id" }: GraphProps) => {
+const Graph = ({ inputType, data, id = "graph-id" }: GraphProps) => {
   // the graph configuration, you only need to pass down properties
   // that you want to override, otherwise default ones will be used
   const myConfig = {
@@ -21,8 +23,10 @@ const Graph = ({ data, id = "graph-id" }: GraphProps) => {
       labelPosition: "center"
     },
     link: {
-      color: "blue"
-    }
+      color: "blue",
+      renderLabel: true
+    },
+    renderLabel: getTypeConfig(inputType).weighted
   };
 
   // graph event callbacks

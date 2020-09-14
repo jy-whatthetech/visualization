@@ -3,7 +3,10 @@ import "./App.css";
 import Graph from "./graph/Graph";
 import * as ParseUtils from "./parser/parseUtils";
 import * as Utils from "./utils/utils";
-import { InputType, getLabel } from "./parser/inputTypes";
+import { InputType, getLabel, getTypeConfig } from "./parser/inputTypes";
+
+// TODO: Add ability to specify own nodes
+// TODO: ability to set directed/undirected
 
 function App() {
   const [inputValue, setInputValue] = React.useState("");
@@ -17,8 +20,8 @@ function App() {
       { id: "Alice", x: 200, y: 200 }
     ],
     links: [
-      { source: "Harry", target: "Sally" },
-      { source: "Harry", target: "Alice" }
+      { source: "Harry", target: "Sally", label: "test123" },
+      { source: "Harry", target: "Alice", label: "test456" }
     ]
   });
 
@@ -80,6 +83,7 @@ function App() {
       </form>
       <Graph
         id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
+        inputType={comboValue}
         data={data}
       />
     </>
