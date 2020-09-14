@@ -1,22 +1,49 @@
 import React from "react";
 import { Graph as D3Graph } from "react-d3-graph";
-import { InputType, getTypeConfig } from "../parser/inputTypes";
+import { getTypeConfig } from "../parser/inputTypes";
+import { parseNodes } from "../parser/parseUtils";
+import * as Utils from "../utils/utils";
 
 type GraphProps = {
   inputType: number;
   data: any;
   id: string;
+  directed: boolean;
+  customNodes: string;
 };
 
-const Graph = ({ inputType, data, id = "graph-id" }: GraphProps) => {
+const Graph = ({
+  inputType,
+  data,
+  id = "graph-id",
+  directed,
+  customNodes
+}: GraphProps) => {
   // the graph configuration, you only need to pass down properties
-  // that you want to override, otherwise default ones will be used
+  // that you want to override, otherwise default ones will be
+
+  if (customNodes && customNodes.length > 0) {
+    const nodeSet = parseNodes(customNodes);
+    if (nodeSet.size > 0) {
+      for (let n of data.nodes) {
+        nodeSet.add(n.id);
+      }
+      const tempNodes = [];
+      for (let nodeId of Array.from(nodeSet)) {
+        let x = Utils.randomInRange(10, 800);
+        let y = Utils.randomInRange(10, 600);
+        tempNodes.push({ id: nodeId, x: x, y: y });
+      }
+      data.nodes = tempNodes;
+    }
+  }
+
   const myConfig = {
     nodeHighlightBehavior: true,
     staticGraphWithDragAndDrop: true,
     width: 1200,
     height: 800,
-    directed: true,
+    directed: directed,
     node: {
       color: "lightgreen",
       size: 420,
@@ -24,55 +51,54 @@ const Graph = ({ inputType, data, id = "graph-id" }: GraphProps) => {
     },
     link: {
       color: "blue",
-      renderLabel: true
-    },
-    renderLabel: getTypeConfig(inputType).weighted
+      renderLabel: getTypeConfig(inputType).weighted
+    }
   };
 
   // graph event callbacks
-  const onClickGraph = function() {
-    window.alert(`Clicked the graph background`);
-  };
+  // const onClickGraph = function() {
+  //   window.alert(`Clicked the graph background`);
+  // };
 
-  const onClickNode = function(nodeId: string) {
-    window.alert(`Clicked node ${nodeId}`);
-  };
+  // const onClickNode = function(nodeId: string) {
+  //   window.alert(`Clicked node ${nodeId}`);
+  // };
 
-  const onDoubleClickNode = function(nodeId: string) {
-    window.alert(`Double clicked node ${nodeId}`);
-  };
+  // const onDoubleClickNode = function(nodeId: string) {
+  //   window.alert(`Double clicked node ${nodeId}`);
+  // };
 
-  const onRightClickNode = function(event: any, nodeId: string) {
-    window.alert(`Right clicked node ${nodeId}`);
-  };
+  // const onRightClickNode = function(event: any, nodeId: string) {
+  //   window.alert(`Right clicked node ${nodeId}`);
+  // };
 
-  const onMouseOverNode = function(nodeId: string) {
-    window.alert(`Mouse over node ${nodeId}`);
-  };
+  // const onMouseOverNode = function(nodeId: string) {
+  //   window.alert(`Mouse over node ${nodeId}`);
+  // };
 
-  const onMouseOutNode = function(nodeId: string) {
-    window.alert(`Mouse out node ${nodeId}`);
-  };
+  // const onMouseOutNode = function(nodeId: string) {
+  //   window.alert(`Mouse out node ${nodeId}`);
+  // };
 
-  const onClickLink = function(source: string, target: string) {
-    window.alert(`Clicked link between ${source} and ${target}`);
-  };
+  // const onClickLink = function(source: string, target: string) {
+  //   window.alert(`Clicked link between ${source} and ${target}`);
+  // };
 
-  const onRightClickLink = function(
-    event: any,
-    source: string,
-    target: string
-  ) {
-    window.alert(`Right clicked link between ${source} and ${target}`);
-  };
+  // const onRightClickLink = function(
+  //   event: any,
+  //   source: string,
+  //   target: string
+  // ) {
+  //   window.alert(`Right clicked link between ${source} and ${target}`);
+  // };
 
-  const onMouseOverLink = function(source: string, target: string) {
-    window.alert(`Mouse over in link between ${source} and ${target}`);
-  };
+  // const onMouseOverLink = function(source: string, target: string) {
+  //   window.alert(`Mouse over in link between ${source} and ${target}`);
+  // };
 
-  const onMouseOutLink = function(source: string, target: string) {
-    window.alert(`Mouse out link between ${source} and ${target}`);
-  };
+  // const onMouseOutLink = function(source: string, target: string) {
+  //   window.alert(`Mouse out link between ${source} and ${target}`);
+  // };
 
   const onNodePositionChange = function(nodeId: string, x: number, y: number) {
     window.alert(
