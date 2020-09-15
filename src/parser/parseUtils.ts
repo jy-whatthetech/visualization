@@ -12,13 +12,9 @@ export function processInput(input: string, type: number): any {
     case InputType.AdjacencyList1Ind:
       return parseAdjacencyList(config);
     case InputType.AdjacencyMatrix:
-      return "Adjacency Matrix";
-    case InputType.BinaryTree:
-      return "Binary Tree";
+      return parseAdjacencyMatrix(config);
     case InputType.GraphObject:
       return "Graph Object";
-    case InputType.TreeObject:
-      return "Ancestor Graph";
     default:
       break;
   }
@@ -116,8 +112,7 @@ export function parseAdjacencyList(config: {
 
     try {
       const arr = parseArray(
-        input.slice(nextOpenBracket + 1, nextCloseBracket),
-        nodeSet
+        input.slice(nextOpenBracket + 1, nextCloseBracket)
       );
       for (let trg of arr) {
         links.push({ source: src, target: trg });
@@ -133,7 +128,7 @@ export function parseAdjacencyList(config: {
 
   return { nodeSet: nodeSet, links: links };
 }
-function parseArray(s: string, nodeSet: Set<string>): any[] {
+function parseArray(s: string): any[] {
   s = s.trim();
 
   const rtn: any[] = [];
@@ -157,7 +152,50 @@ export function parseAdjacencyMatrix(config: { input: string }): any {
   if (input.length < 2) throw new Error("Input too short");
   input = input.slice(1, input.length - 1);
 
-  // TODO: parse each row of the matrix and add a connection between row i and column j when 1 is encountered
+  // parse each row of the matrix and add a connection between row i and column j when 1 is encountered
+  const matrix = [];
+  const links = [];
+  const nodeSet = new Set<string>();
+
+  let startInd = 0;
+  let nextOpenBracket = input.indexOf("[", startInd);
+  let srcNode = 0; // index of source node
+  while (nextOpenBracket !== -1) {
+    const nextCloseBracket = input.indexOf("]", nextOpenBracket);
+    if (nextCloseBracket === -1) throw new Error("No matching close bracket");
+
+    const src = srcNode.toString();
+    nodeSet.add(src);
+
+    try {
+      const arr = parseArray(
+        input.slice(nextOpenBracket + 1, nextCloseBracket)
+      );
+      matrix.push(arr);
+    } catch (ex) {
+      throw ex;
+    }
+
+    startInd = nextCloseBracket;
+    nextOpenBracket = input.indexOf("[", startInd);
+    srcNode++;
+  }
+
+  const n = matrix.length;
+  for (let i = 0; i < matrix.length; i++) {
+    const arr = matrix[i];
+    if (arr.length !== n)
+      throw new Error("adjacency matrix has incorrect column size(s)");
+    for (let j = 0; j < n; j++) {
+      const colVal = arr[j];
+      const colValNum = parseInt(colVal);
+      if (colValNum === 1) {
+        links.push({ source: i.toString(), target: j.toString() });
+      }
+    }
+  }
+
+  return { nodeSet: nodeSet, links: links };
 }
 
 export function parseNodes(input: string) {

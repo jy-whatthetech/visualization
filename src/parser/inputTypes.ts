@@ -4,9 +4,7 @@ export enum InputType {
   AdjacencyList,
   AdjacencyList1Ind,
   AdjacencyMatrix,
-  BinaryTree,
-  GraphObject,
-  TreeObject
+  GraphObject
 }
 
 export function getLabel(type: number) {
@@ -21,12 +19,8 @@ export function getLabel(type: number) {
       return "One-indexed Adjacency List";
     case InputType.AdjacencyMatrix:
       return "Adjacency Matrix";
-    case InputType.BinaryTree:
-      return "Binary Tree or Heap";
     case InputType.GraphObject:
       return "Graph JSON";
-    case InputType.TreeObject:
-      return "Tree JSON";
     default:
       return "Error Label";
   }
