@@ -1,3 +1,4 @@
+import parseJson from "parse-json";
 import { InputType, getTypeConfig } from "./inputTypes";
 
 export function processInput(input: string, type: number): any {
@@ -14,7 +15,9 @@ export function processInput(input: string, type: number): any {
     case InputType.AdjacencyMatrix:
       return parseAdjacencyMatrix(config);
     case InputType.GraphObject:
-      return "Graph Object";
+      return parseGraphJSON(config);
+    case InputType.BinaryTreeObject:
+      return parseBinaryTreeJSON(config);
     default:
       break;
   }
@@ -196,6 +199,50 @@ export function parseAdjacencyMatrix(config: { input: string }): any {
   }
 
   return { nodeSet: nodeSet, links: links };
+}
+
+// TODO: Read start node (needed for layout)?
+export function parseGraphJSON(config: { input: string }) {
+  let { input } = config;
+  input = input.trim();
+  const jsonObj = parseJson(input); // parseJson library will automatically handle and throw error in syntax
+  let nodes = jsonObj.graph.nodes;
+
+  const nodeSet = new Set<string>();
+  const links = [];
+
+  for (let node of nodes) {
+    nodeSet.add(node.id);
+    let children = node.children;
+    for (let child of children) {
+      links.push({ source: node.id, target: child });
+    }
+  }
+
+  return { startNode: jsonObj.graph.startNode, nodeSet: nodeSet, links: links };
+}
+
+// TODO: Read root node (needed for layout)?
+export function parseBinaryTreeJSON(config: { input: string }) {
+  let { input } = config;
+  input = input.trim();
+  const jsonObj = parseJson(input); // parseJson library will automatically handle and throw error in syntax
+  let nodes = jsonObj.tree.nodes;
+
+  const nodeSet = new Set<string>();
+  const links = [];
+
+  for (let node of nodes) {
+    nodeSet.add(node.id);
+    if (node.left !== null) {
+      links.push({ source: node.id, target: node.left });
+    }
+    if (node.right !== null) {
+      links.push({ source: node.id, target: node.right });
+    }
+  }
+
+  return { startNode: jsonObj.tree.root, nodeSet: nodeSet, links: links };
 }
 
 export function parseNodes(input: string) {

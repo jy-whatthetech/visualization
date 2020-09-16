@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.2.1",
     "@types/react-d3-graph": "^2.3.3",
     "d3": "^5.5.0",
+    "parse-json": "^5.1.0",
     "react": "^16.13.1",
     "react-d3-graph": "^2.5.0",
     "react-dom": "^16.13.1",
