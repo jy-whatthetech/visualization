@@ -4,10 +4,21 @@ import Graph from "./graph/Graph";
 import * as ParseUtils from "./parser/parseUtils";
 import * as Utils from "./utils/utils";
 import { InputType, getLabel } from "./parser/inputTypes";
+import { FormControl, MenuItem, InputLabel, Select } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 
-// TODO: Add ability to specify own nodes
+const useStyles = makeStyles(theme => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 220
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2)
+  }
+}));
 
 function App() {
+  const classes = useStyles();
   const [inputValue, setInputValue] = React.useState("");
   const [comboValue, setComboValue] = React.useState(0);
   const [directed, setDirected] = React.useState(true);
@@ -52,26 +63,31 @@ function App() {
 
   return (
     <>
-      [[2,1],[3,1],[1,4]]
-      <br />
-      [[1],[],[0,5],[],[1,3,0],[0]]
-      <br />
-      <form>
-        <label>Choose an input type:</label>
-        <select
+      <FormControl className={classes.formControl}>
+        <InputLabel id="graph-input-type-label">Input Type</InputLabel>
+        <Select
+          labelId="graph-input-type-label"
+          id="graph-input-type"
+          value={comboValue}
+          className={classes.selectEmpty}
           onChange={e => {
-            setComboValue(parseInt(e.target.value));
+            setComboValue(parseInt(e.target.value as string));
           }}
         >
           {Object.keys(InputType)
             .filter(k => typeof InputType[k as any] !== "number")
             .map(key => (
-              <option key={key} value={key}>
+              <MenuItem key={key} value={key}>
                 {getLabel(parseInt(key))}
-              </option>
+              </MenuItem>
             ))}
-        </select>
-        <br />
+        </Select>
+      </FormControl>
+      [[2,1],[3,1],[1,4]]
+      <br />
+      [[1],[],[0,5],[],[1,3,0],[0]]
+      <br />
+      <form>
         <label>
           Directed:{" "}
           <input

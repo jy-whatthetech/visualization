@@ -34,7 +34,7 @@ export function parsePairs(config: {
 
   // trim whitespace
   input = input.trim();
-  if (input.length < 2) throw new Error("Input too short");
+  if (input.length < 2) throw new Error("Please enter a non-empty input.");
   input = input.slice(1, input.length - 1);
 
   const links = [];
@@ -44,7 +44,7 @@ export function parsePairs(config: {
   let nextOpenBracket = input.indexOf("[", startInd);
   while (nextOpenBracket !== -1) {
     const nextCloseBracket = input.indexOf("]", nextOpenBracket);
-    if (nextCloseBracket === -1) throw new Error("No matching close bracket");
+    if (nextCloseBracket === -1) throw new Error("Missing a `]`");
 
     try {
       const pair = getDirectedPair(
@@ -68,13 +68,13 @@ export function parsePairs(config: {
 function getDirectedPair(s: string, nodeSet: Set<string>, weighted: boolean) {
   s = s.trim();
   if (s.length === 0 || s.indexOf(",") === -1)
-    throw new Error("pair needs at least two arguments");
+    throw new Error("An edge pair had less than two arguments.");
   const sp = s.split(",");
   const src = sp[0].trim();
   const trg = sp[1].trim();
 
   if (src.length === 0 || trg.length === 0)
-    throw new Error("src and trg need to be non-empty");
+    throw new Error("An edge pair had less than two arguments.");
 
   nodeSet.add(src);
   nodeSet.add(trg);
@@ -97,7 +97,7 @@ export function parseAdjacencyList(config: {
 
   // trim whitespace
   input = input.trim();
-  if (input.length < 2) throw new Error("Input too short");
+  if (input.length < 2) throw new Error("Please enter a non-empty input.");
   input = input.slice(1, input.length - 1);
 
   const links = [];
@@ -108,7 +108,7 @@ export function parseAdjacencyList(config: {
   let srcNode = oneIndexed ? 1 : 0; // index of source node
   while (nextOpenBracket !== -1) {
     const nextCloseBracket = input.indexOf("]", nextOpenBracket);
-    if (nextCloseBracket === -1) throw new Error("No matching close bracket");
+    if (nextCloseBracket === -1) throw new Error("Missing a `]`");
 
     const src = srcNode.toString();
     nodeSet.add(src);
@@ -188,7 +188,7 @@ export function parseAdjacencyMatrix(config: { input: string }): any {
   for (let i = 0; i < matrix.length; i++) {
     const arr = matrix[i];
     if (arr.length !== n)
-      throw new Error("adjacency matrix has incorrect column size(s)");
+      throw new Error("Adjacency matrix has incorrect column size(s)");
     for (let j = 0; j < n; j++) {
       const colVal = arr[j];
       const colValNum = parseInt(colVal);
@@ -205,7 +205,15 @@ export function parseAdjacencyMatrix(config: { input: string }): any {
 export function parseGraphJSON(config: { input: string }) {
   let { input } = config;
   input = input.trim();
-  const jsonObj = parseJson(input); // parseJson library will automatically handle and throw error in syntax
+  let jsonObj: any;
+  try {
+    jsonObj = parseJson(input); // parseJson library will automatically handle and throw error in syntax
+  } catch (error) {
+    throw new Error(error.message);
+  }
+  if (!jsonObj.graph || !jsonObj.graph.nodes) {
+    throw new Error("JSON object is missing the `graph.nodes` property");
+  }
   let nodes = jsonObj.graph.nodes;
 
   const nodeSet = new Set<string>();
@@ -213,9 +221,11 @@ export function parseGraphJSON(config: { input: string }) {
 
   for (let node of nodes) {
     nodeSet.add(node.id);
-    let children = node.children;
-    for (let child of children) {
-      links.push({ source: node.id, target: child });
+    if (node.children) {
+      let children = node.children;
+      for (let child of children) {
+        links.push({ source: node.id, target: child });
+      }
     }
   }
 
@@ -226,7 +236,16 @@ export function parseGraphJSON(config: { input: string }) {
 export function parseBinaryTreeJSON(config: { input: string }) {
   let { input } = config;
   input = input.trim();
-  const jsonObj = parseJson(input); // parseJson library will automatically handle and throw error in syntax
+  let jsonObj: any;
+  try {
+    jsonObj = parseJson(input); // parseJson library will automatically handle and throw error in syntax
+  } catch (error) {
+    throw new Error(error.message);
+  }
+
+  if (!jsonObj.tree || !jsonObj.tree.nodes) {
+    throw new Error("JSON object is missing the `tree.nodes` property");
+  }
   let nodes = jsonObj.tree.nodes;
 
   const nodeSet = new Set<string>();
@@ -234,10 +253,10 @@ export function parseBinaryTreeJSON(config: { input: string }) {
 
   for (let node of nodes) {
     nodeSet.add(node.id);
-    if (node.left !== null) {
+    if (node.left) {
       links.push({ source: node.id, target: node.left });
     }
-    if (node.right !== null) {
+    if (node.right) {
       links.push({ source: node.id, target: node.right });
     }
   }
