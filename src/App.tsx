@@ -15,7 +15,10 @@ import {
   Toolbar,
   Divider,
   IconButton,
-  Typography
+  Typography,
+  TextareaAutosize,
+  FormControlLabel,
+  Checkbox
 } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { useStyles } from "./styles/useStyles";
@@ -95,7 +98,7 @@ function App() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Persistent drawer
+            TODO: Layout buttons
           </Typography>
         </Toolbar>
       </AppBar>
@@ -109,6 +112,9 @@ function App() {
         }}
       >
         <div className={classes.drawerHeader}>
+          <Typography className={classes.drawerHeaderText} variant="h6" noWrap>
+            Graph Input
+          </Typography>
           <IconButton
             onClick={() => {
               setDrawerOpen(false);
@@ -119,16 +125,23 @@ function App() {
         </div>
         <div>
           <Divider />
-          [[2,1],[3,1],[1,4]]
-          <br />
-          [[1],[],[0,5],[],[1,3,0],[0]]
-          <br />
+          <FormControl className={classes.formControl}>
+            <TextareaAutosize
+              rowsMin={3}
+              rowsMax={10}
+              placeholder="Please enter graph input."
+              value={inputValue}
+              onChange={event => {
+                setInputValue(event.target.value);
+              }}
+            />
+          </FormControl>
           <FormControl className={classes.formControl}>
             <InputLabel id="graph-input-type-label">Input Type</InputLabel>
             <Select
               labelId="graph-input-type-label"
               id="graph-input-type"
-              value={""}
+              value={comboValue}
               className={classes.selectEmpty}
               onChange={e => {
                 setComboValue(parseInt(e.target.value as string));
@@ -143,40 +156,29 @@ function App() {
                 ))}
             </Select>
           </FormControl>
-          <form>
-            <label>
-              Directed:{" "}
-              <input
-                type="checkbox"
-                value={"directedValue"}
+          <FormControlLabel
+            className={classes.formControlLabel}
+            control={
+              <Checkbox
                 checked={directed}
                 onChange={e => setDirected(!directed)}
+                name="directedValue"
+                color="primary"
               />
-            </label>
-            <br />
-            <label>
-              Graph Input:
-              <textarea
-                id="graph-input"
-                name="graph-input"
-                value={inputValue}
-                onChange={event => {
-                  setInputValue(event.target.value);
-                }}
-              />
-            </label>
-            <label>
-              Custom Nodes:
-              <textarea
-                id="custom-nodes"
-                name="custom-nodes"
-                value={customNodes}
-                onChange={event => {
-                  setCustomNodes(event.target.value);
-                }}
-              />
-            </label>
-          </form>
+            }
+            label="Directed"
+          />
+          <FormControl className={classes.formControl}>
+            <TextareaAutosize
+              rowsMin={3}
+              rowsMax={10}
+              placeholder="Enter custom node set here."
+              value={customNodes}
+              onChange={event => {
+                setCustomNodes(event.target.value);
+              }}
+            />
+          </FormControl>
         </div>
       </Drawer>
       <main

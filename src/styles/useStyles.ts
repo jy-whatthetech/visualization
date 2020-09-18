@@ -1,7 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const drawerWidth = 240;
-const formWidth = 220;
+const drawerWidth = 300;
 
 export const useStyles = makeStyles(theme => ({
   // layout styles
@@ -37,6 +36,9 @@ export const useStyles = makeStyles(theme => ({
     ...theme.mixins.toolbar,
     justifyContent: "flex-end"
   },
+  drawerHeaderText: {
+    width: "100%"
+  },
   menuButton: {
     marginRight: theme.spacing(2)
   },
@@ -63,7 +65,10 @@ export const useStyles = makeStyles(theme => ({
   // form styles
   formControl: {
     margin: theme.spacing(1),
-    minWidth: formWidth
+    width: `calc(100% - ${30}px)`
+  },
+  formControlLabel: {
+    margin: -4
   },
   selectEmpty: {
     marginTop: theme.spacing(2)
