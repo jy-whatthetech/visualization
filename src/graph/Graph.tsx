@@ -12,13 +12,7 @@ type GraphProps = {
   customNodes: string;
 };
 
-const Graph = ({
-  inputType,
-  data,
-  id = "graph-id",
-  directed,
-  customNodes
-}: GraphProps) => {
+const Graph = ({ inputType, data, id = "graph-id", directed, customNodes }: GraphProps) => {
   // the graph configuration, you only need to pass down properties
   // that you want to override, otherwise default ones will be
 
@@ -101,9 +95,7 @@ const Graph = ({
   // };
 
   const onNodePositionChange = function(nodeId: string, x: number, y: number) {
-    window.alert(
-      `Node ${nodeId} is moved to new position. New position is x= ${x} y= ${y}`
-    );
+    window.alert(`Node ${nodeId} is moved to new position. New position is x= ${x} y= ${y}`);
   };
 
   return (

@@ -23,10 +23,7 @@ import {
 } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { useStyles } from "./styles/useStyles";
-import {
-  Menu as MenuIcon,
-  ChevronLeft as ChevronLeftIcon
-} from "@material-ui/icons";
+import { Menu as MenuIcon, ChevronLeft as ChevronLeftIcon } from "@material-ui/icons";
 
 function App() {
   const classes = useStyles();
@@ -107,18 +104,10 @@ function App() {
           <Button className={classes.layoutButton} variant="contained">
             Topological Sort
           </Button>
-          <Button
-            className={classes.layoutButton}
-            variant="contained"
-            color="primary"
-          >
+          <Button className={classes.layoutButton} variant="contained" color="primary">
             Force Layout
           </Button>
-          <Button
-            className={classes.layoutButton}
-            variant="contained"
-            color="secondary"
-          >
+          <Button className={classes.layoutButton} variant="contained" color="secondary">
             Secondary
           </Button>
           <Button className={classes.layoutButton} variant="contained">
