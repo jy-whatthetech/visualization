@@ -1,16 +1,20 @@
 import parseJson from "parse-json";
 import { InputType, getTypeConfig } from "./inputTypes";
 
-export function processInput(input: string, type: number): any {
+export function processInput(input: string, type: number, options?: any): any {
   const config = getTypeConfig(type);
   config.input = input;
+  if (options) {
+    if (options.oneIndexed) {
+      config.oneIndexed = true;
+    }
+  }
 
   switch (type) {
     case InputType.EdgePairs:
     case InputType.WeightedEdgePairs:
       return parsePairs(config);
     case InputType.AdjacencyList:
-    case InputType.AdjacencyList1Ind:
       return parseAdjacencyList(config);
     case InputType.AdjacencyMatrix:
       return parseAdjacencyMatrix(config);

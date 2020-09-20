@@ -2,7 +2,6 @@ export enum InputType {
   EdgePairs,
   WeightedEdgePairs,
   AdjacencyList,
-  AdjacencyList1Ind,
   AdjacencyMatrix,
   GraphObject,
   BinaryTreeObject
@@ -16,8 +15,6 @@ export function getLabel(type: number) {
       return "Weighted Edge Pairs";
     case InputType.AdjacencyList:
       return "Adjacency List";
-    case InputType.AdjacencyList1Ind:
-      return "One-indexed Adjacency List";
     case InputType.AdjacencyMatrix:
       return "Adjacency Matrix";
     case InputType.GraphObject:
@@ -39,9 +36,6 @@ export function getTypeConfig(type: InputType): any {
   switch (type) {
     case InputType.WeightedEdgePairs:
       config.weighted = true;
-      break;
-    case InputType.AdjacencyList1Ind:
-      config.oneIndexed = true;
       break;
     default:
       break;
