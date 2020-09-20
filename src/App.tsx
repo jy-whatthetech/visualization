@@ -25,6 +25,9 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { useStyles } from "./styles/useStyles";
 import { Menu as MenuIcon, ChevronLeft as ChevronLeftIcon } from "@material-ui/icons";
 
+const DEFAULT_GRAPH_INPUT = "[[2,1],[3,1],[1,4]]";
+const DEFAULT_CUSTOM_NODES_INPUT = "[5]";
+
 function App() {
   const classes = useStyles();
 
@@ -32,13 +35,14 @@ function App() {
   const [drawerOpen, setDrawerOpen] = React.useState(true);
 
   // input data
-  const [inputValue, setInputValue] = React.useState("");
+  const [inputValue, setInputValue] = React.useState(DEFAULT_GRAPH_INPUT);
   const [comboValue, setComboValue] = React.useState(0);
   const [directed, setDirected] = React.useState(true);
   const [oneIndexed, setOneIndexed] = React.useState(true);
-  const [customNodes, setCustomNodes] = React.useState("");
+  const [customNodes, setCustomNodes] = React.useState(DEFAULT_CUSTOM_NODES_INPUT);
 
   // graph payload (with minimalist structure)
+  const [customNodeSet, setCustomNodeSet] = React.useState(new Set<string>());
   const [data, setData] = React.useState({
     nodes: [
       { id: "Harry", x: 50, y: 50 },
@@ -51,6 +55,7 @@ function App() {
     ]
   });
 
+  // handle changes to graph input, input type, associated options (i.e. 1-indexed)
   React.useEffect(() => {
     if (!inputValue) return;
 
@@ -75,7 +80,21 @@ function App() {
     console.log(parsedValue);
     parsedValue.nodes = tempNodes;
     setData(parsedValue);
-  }, [inputValue, oneIndexed]);
+  }, [inputValue, comboValue, oneIndexed]);
+
+  // handle changes to custom nodes input ()
+  React.useEffect(() => {
+    if (!customNodes) return;
+
+    let parsedValue: Set<string>;
+    try {
+      parsedValue = ParseUtils.parseNodes(customNodes);
+    } catch (ex) {
+      console.error(ex);
+      return;
+    }
+    setCustomNodeSet(parsedValue);
+  }, [customNodes]);
 
   return (
     <div className={classes.root}>
@@ -218,7 +237,7 @@ function App() {
           id="graph-id" // id is mandatory, if no id is defined rd3g will throw an error
           inputType={comboValue}
           directed={directed}
-          customNodes={customNodes}
+          customNodes={customNodeSet}
           data={data}
         />
       </main>

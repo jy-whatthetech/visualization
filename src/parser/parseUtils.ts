@@ -263,18 +263,29 @@ export function parseNodes(input: string) {
   const nodeSet = new Set<string>();
   input = input.trim();
   if (input.length < 2) {
-    console.error("Input too short");
-    return nodeSet;
+    throw new Error("Input too short");
   }
   input = input.slice(1, input.length - 1);
-  if (input.length === 0 || input.indexOf(",") === -1) {
-    console.error("Input too short");
+  if (input.length === 0) {
     return nodeSet;
   }
+  if (input.indexOf(",") === -1) {
+    nodeSet.add(input);
+    return nodeSet;
+  }
+
   const sp = input.split(",");
   for (let s of sp) {
     s = s.trim();
     if (s.length) nodeSet.add(s);
   }
   return nodeSet;
+}
+
+// Binary tree/heap in array form (child is at 2n+1 and 2n+2)
+export function parseBinaryHeap(input: string) {
+  if (input.length < 2) {
+    throw new Error("Input too short");
+  }
+  //TODO:
 }

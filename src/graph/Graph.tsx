@@ -1,7 +1,6 @@
 import React from "react";
 import { Graph as D3Graph } from "react-d3-graph";
 import { getTypeConfig } from "../parser/inputTypes";
-import { parseNodes } from "../parser/parseUtils";
 import * as Utils from "../utils/utils";
 
 type GraphProps = {
@@ -9,26 +8,23 @@ type GraphProps = {
   data: any;
   id: string;
   directed: boolean;
-  customNodes: string;
+  customNodes: Set<string>;
 };
 
 const Graph = ({ inputType, data, id = "graph-id", directed, customNodes }: GraphProps) => {
   // the graph configuration, you only need to pass down properties
   // that you want to override, otherwise default ones will be
 
-  if (customNodes && customNodes.length > 0) {
-    const nodeSet = parseNodes(customNodes);
-    if (nodeSet.size > 0) {
-      for (let n of data.nodes) {
-        nodeSet.add(n.id);
-      }
-      const tempNodes = [];
-      for (let nodeId of Array.from(nodeSet)) {
-        let x = Utils.randomInRange(10, 800);
-        let y = Utils.randomInRange(10, 600);
-        tempNodes.push({ id: nodeId, x: x, y: y });
-      }
-      data.nodes = tempNodes;
+  // add nodes from customNodes that don't already exist
+  if (customNodes && customNodes.size > 0) {
+    const seen = new Set();
+    for (let n of data.nodes) {
+      seen.add(n.id);
+    }
+    for (let nodeId of Array.from(customNodes)) {
+      let x = Utils.randomInRange(10, 800);
+      let y = Utils.randomInRange(10, 600);
+      data.nodes.push({ id: nodeId, x: x, y: y });
     }
   }
 
