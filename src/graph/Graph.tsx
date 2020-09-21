@@ -33,7 +33,7 @@ const Graph = ({
     for (let nodeId of Array.from(customNodes)) {
       if (!seen.has(nodeId)) {
         seen.add(nodeId);
-        data.nodes.push({ id: nodeId });
+        data.nodes.push({ id: nodeId, label: nodeId });
       }
     }
   }
@@ -53,7 +53,8 @@ const Graph = ({
     node: {
       color: "lightgreen",
       size: 420,
-      labelPosition: "center"
+      labelPosition: "center",
+      labelProperty: "label" as any
     },
     link: {
       color: "blue",

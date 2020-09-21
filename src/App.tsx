@@ -26,7 +26,7 @@ import { useStyles } from "./styles/useStyles";
 import { Menu as MenuIcon, ChevronLeft as ChevronLeftIcon } from "@material-ui/icons";
 
 const DEFAULT_GRAPH_INPUT = "[[2,1],[3,1],[1,4]]";
-const DEFAULT_CUSTOM_NODES_INPUT = "[5]";
+const DEFAULT_CUSTOM_NODES_INPUT = "[]";
 
 function App() {
   const classes = useStyles();
@@ -72,8 +72,13 @@ function App() {
       return;
     }
 
+    const nodeToLabel = parsedValue.nodeToLabel ? parsedValue.nodeToLabel : {};
+
     parsedValue.nodes = Array.from(parsedValue.nodeSet).map(nodeId => {
-      return { id: nodeId };
+      return {
+        id: nodeId as string,
+        label: nodeToLabel.hasOwnProperty(nodeId) ? nodeToLabel[nodeId as string] : nodeId
+      };
     });
     if (parsedValue.startValue) {
       setStartNode(parsedValue.startValue);

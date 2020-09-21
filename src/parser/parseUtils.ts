@@ -22,6 +22,10 @@ export function processInput(input: string, type: number, options?: any): any {
       return parseGraphJSON(config);
     case InputType.BinaryTreeObject:
       return parseBinaryTreeJSON(config);
+    case InputType.BinaryHeap:
+      return parseBinaryHeap(config);
+    case InputType.LeetcodeTree:
+      return parseLeetcodeTree(config);
     default:
       break;
   }
@@ -200,7 +204,6 @@ export function parseAdjacencyMatrix(config: { input: string }): any {
   return { nodeSet: nodeSet, links: links };
 }
 
-// TODO: Read start node (needed for layout)?
 export function parseGraphJSON(config: { input: string }) {
   let { input } = config;
   input = input.trim();
@@ -231,7 +234,6 @@ export function parseGraphJSON(config: { input: string }) {
   return { startNode: jsonObj.graph.startNode, nodeSet: nodeSet, links: links };
 }
 
-// TODO: Read root node (needed for layout)?
 export function parseBinaryTreeJSON(config: { input: string }) {
   let { input } = config;
   input = input.trim();
@@ -263,6 +265,111 @@ export function parseBinaryTreeJSON(config: { input: string }) {
   return { startNode: jsonObj.tree.root, nodeSet: nodeSet, links: links };
 }
 
+// Binary tree/heap in array form (child is at 2n+1 and 2n+2)
+// differentiate between id and label
+export function parseBinaryHeap(config: { input: string }) {
+  let { input } = config;
+  input = input.trim();
+  if (input.length < 2) {
+    throw new Error("Input too short");
+  }
+  input = input.slice(1, input.length - 1);
+  if (input.length === 0) {
+    throw new Error("Input too short");
+  }
+  const nodeSet = new Set<string>();
+  const nodeToLabel: any = {};
+  const links: Array<any> = [];
+  if (input.indexOf(",") === -1) {
+    nodeSet.add(input);
+    return { nodeSet: nodeSet, links: links };
+  }
+
+  let sp = input.split(",");
+  sp = sp.map((elem, ind) => {
+    let trimmed = elem.trim();
+    let key = ind + " index";
+    nodeToLabel[key] = trimmed;
+    nodeSet.add(key);
+    return key;
+  });
+  for (let i = 0; i < sp.length; i++) {
+    const src = sp[i];
+    nodeSet.add(src);
+
+    let leftChildInd = i * 2 + 1;
+    let rightChildInd = i * 2 + 2;
+    if (leftChildInd < sp.length) {
+      links.push({ source: src, target: leftChildInd + " index" });
+    }
+    if (rightChildInd < sp.length) {
+      links.push({ source: src, target: rightChildInd + " index" });
+    }
+  }
+  return { nodeSet: nodeSet, nodeToLabel: nodeToLabel, links: links };
+}
+
+// Leetcode's binary tree serialization
+// (modified bfs; see https://support.leetcode.com/hc/en-us/articles/360011883654-What-does-1-null-2-3-mean-in-binary-tree-representation-)
+// differentiate between id and label
+export function parseLeetcodeTree(config: { input: string }) {
+  let { input } = config;
+  input = input.trim();
+  if (input.length < 2) {
+    throw new Error("Input too short");
+  }
+  input = input.slice(1, input.length - 1);
+  if (input.length === 0) {
+    throw new Error("Input too short");
+  }
+
+  const nodeSet = new Set<string>();
+  const nodeToLabel: any = {};
+  const links: Array<any> = [];
+
+  if (input.indexOf(",") === -1) {
+    nodeSet.add(input);
+    return { nodeSet: nodeSet, links: links };
+  }
+
+  let sp = input.split(",");
+  sp = sp.map((elem, ind) => {
+    let trimmed = elem.trim();
+    let key = ind + " index";
+    if (trimmed !== "null") {
+      nodeSet.add(key);
+      nodeToLabel[key] = trimmed;
+    }
+    return elem.trim();
+  });
+
+  let queue = []; // queue.shift() to dequeue
+  queue.push("0 index");
+  let ind = 1;
+  while (queue.length > 0) {
+    let src = queue.shift();
+    if (ind >= sp.length) break;
+    let trg = sp[ind];
+    if (trg !== "null") {
+      // connect add to queue
+      trg = ind + " index";
+      links.push({ source: src, target: trg });
+      queue.push(trg);
+    }
+    ind++;
+    if (ind >= sp.length) break;
+    trg = sp[ind];
+    if (trg !== "null") {
+      trg = ind + " index";
+      links.push({ source: src, target: trg });
+      queue.push(trg);
+    }
+    ind++;
+  }
+
+  return { nodeSet: nodeSet, nodeToLabel: nodeToLabel, links: links };
+}
+
 export function parseNodes(input: string) {
   const nodeSet = new Set<string>();
   input = input.trim();
@@ -284,12 +391,4 @@ export function parseNodes(input: string) {
     if (s.length) nodeSet.add(s);
   }
   return nodeSet;
-}
-
-// Binary tree/heap in array form (child is at 2n+1 and 2n+2)
-export function parseBinaryHeap(input: string) {
-  if (input.length < 2) {
-    throw new Error("Input too short");
-  }
-  //TODO:
 }
