@@ -16,7 +16,7 @@ import {
   Divider,
   IconButton,
   Typography,
-  TextareaAutosize,
+  TextField,
   FormControlLabel,
   Checkbox,
   Button
@@ -38,21 +38,21 @@ function App() {
   const [inputValue, setInputValue] = React.useState(DEFAULT_GRAPH_INPUT);
   const [comboValue, setComboValue] = React.useState(0);
   const [directed, setDirected] = React.useState(true);
-  const [oneIndexed, setOneIndexed] = React.useState(true);
+  const [oneIndexed, setOneIndexed] = React.useState(false);
   const [customNodes, setCustomNodes] = React.useState(DEFAULT_CUSTOM_NODES_INPUT);
+
+  // error handling
+  const [graphInputError, setGraphInputError] = React.useState("");
+  const [customNodesInputError, setCustomNodesInputError] = React.useState("");
 
   // graph payload (with minimalist structure)
   const [customNodeSet, setCustomNodeSet] = React.useState(new Set<string>());
   const [data, setData] = React.useState({
     nodes: [
-      { id: "Harry", x: 50, y: 50 },
-      { id: "Sally", x: 100, y: 200 },
-      { id: "Alice", x: 200, y: 200 }
+      { id: "PlaceHolderNode1", x: 50, y: 50 },
+      { id: "PlaceHolderNode2", x: 100, y: 100 }
     ],
-    links: [
-      { source: "Harry", target: "Sally", label: "test123" },
-      { source: "Harry", target: "Alice", label: "test456" }
-    ]
+    links: [{ source: "PlaceHolderNode1", target: "PlaceHolderNode2", label: "TestLinkLabel" }]
   });
 
   // handle changes to graph input, input type, associated options (i.e. 1-indexed)
@@ -65,7 +65,7 @@ function App() {
         oneIndexed
       });
     } catch (ex) {
-      console.error(ex);
+      setGraphInputError(ex.message);
       return;
     }
 
@@ -77,8 +77,8 @@ function App() {
       tempNodes.push({ id: nodeId, x: x, y: y });
     }
 
-    console.log(parsedValue);
     parsedValue.nodes = tempNodes;
+    setGraphInputError("");
     setData(parsedValue);
   }, [inputValue, comboValue, oneIndexed]);
 
@@ -90,9 +90,10 @@ function App() {
     try {
       parsedValue = ParseUtils.parseNodes(customNodes);
     } catch (ex) {
-      console.error(ex);
+      setCustomNodesInputError(ex.message);
       return;
     }
+    setCustomNodesInputError("");
     setCustomNodeSet(parsedValue);
   }, [customNodes]);
 
@@ -158,14 +159,19 @@ function App() {
         <div>
           <Divider />
           <FormControl className={classes.formControl}>
-            <TextareaAutosize
-              rowsMin={3}
-              rowsMax={10}
+            <TextField
+              label="Graph Input"
               placeholder="Please enter graph input."
+              multiline
+              rows={3}
+              rowsMax={10}
+              variant="outlined"
               value={inputValue}
               onChange={event => {
                 setInputValue(event.target.value);
               }}
+              error={graphInputError.length > 0}
+              helperText={graphInputError}
             />
           </FormControl>
           <FormControl className={classes.formControl}>
@@ -175,6 +181,7 @@ function App() {
               id="graph-input-type"
               value={comboValue}
               className={classes.selectEmpty}
+              variant="outlined"
               onChange={e => {
                 setComboValue(parseInt(e.target.value as string));
               }}
@@ -215,14 +222,19 @@ function App() {
             label="Directed"
           />
           <FormControl className={classes.formControl}>
-            <TextareaAutosize
-              rowsMin={3}
-              rowsMax={10}
+            <TextField
+              label="Custom Nodes Set"
               placeholder="Enter custom node set here."
+              multiline
+              rows={3}
+              rowsMax={10}
+              variant="outlined"
               value={customNodes}
               onChange={event => {
                 setCustomNodes(event.target.value);
               }}
+              error={customNodesInputError.length > 0}
+              helperText={customNodesInputError}
             />
           </FormControl>
         </div>

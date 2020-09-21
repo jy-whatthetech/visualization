@@ -72,7 +72,7 @@ export const useStyles = makeStyles(theme => ({
     width: `calc(100% - ${30}px)`
   },
   formControlLabel: {
-    margin: -4
+    marginLeft: -4
   },
   selectEmpty: {
     marginTop: theme.spacing(2)
