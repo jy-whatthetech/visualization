@@ -4,7 +4,9 @@ export enum InputType {
   AdjacencyList,
   AdjacencyMatrix,
   GraphObject,
-  BinaryTreeObject
+  BinaryTreeObject,
+  BinaryHeap,
+  LeetcodeTree
 }
 
 export function getLabel(type: number) {
@@ -12,15 +14,19 @@ export function getLabel(type: number) {
     case InputType.EdgePairs:
       return "Edge Pairs";
     case InputType.WeightedEdgePairs:
-      return "Weighted Edge Pairs";
+      return "Edge Pairs w/ Weights";
     case InputType.AdjacencyList:
       return "Adjacency List";
     case InputType.AdjacencyMatrix:
       return "Adjacency Matrix";
     case InputType.GraphObject:
-      return "Graph JSON";
+      return "JSON (Graph)";
     case InputType.BinaryTreeObject:
-      return "Binary Tree JSON";
+      return "JSON (Binary Tree)";
+    case InputType.BinaryHeap:
+      return "Array (Binary Heap)";
+    case InputType.LeetcodeTree:
+      return "Array (Leetcode Tree)";
     default:
       return "Error Label";
   }

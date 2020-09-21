@@ -9,9 +9,17 @@ type GraphProps = {
   id: string;
   directed: boolean;
   customNodes: Set<string>;
+  startNode: string;
 };
 
-const Graph = ({ inputType, data, id = "graph-id", directed, customNodes }: GraphProps) => {
+const Graph = ({
+  inputType,
+  data,
+  id = "graph-id",
+  directed,
+  customNodes,
+  startNode
+}: GraphProps) => {
   // the graph configuration, you only need to pass down properties
   // that you want to override, otherwise default ones will be
 
@@ -21,11 +29,19 @@ const Graph = ({ inputType, data, id = "graph-id", directed, customNodes }: Grap
     for (let n of data.nodes) {
       seen.add(n.id);
     }
+    // add if not in seen
     for (let nodeId of Array.from(customNodes)) {
-      let x = Utils.randomInRange(10, 800);
-      let y = Utils.randomInRange(10, 600);
-      data.nodes.push({ id: nodeId, x: x, y: y });
+      if (!seen.has(nodeId)) {
+        seen.add(nodeId);
+        data.nodes.push({ id: nodeId });
+      }
     }
+  }
+
+  // assign positions to all nodes
+  for (let n of data.nodes) {
+    n.x = Utils.randomInRange(10, 700);
+    n.y = Utils.randomInRange(10, 350);
   }
 
   const myConfig = {

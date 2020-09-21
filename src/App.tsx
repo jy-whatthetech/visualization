@@ -3,7 +3,6 @@ import clsx from "clsx";
 import "./App.css";
 import Graph from "./graph/Graph";
 import * as ParseUtils from "./parser/parseUtils";
-import * as Utils from "./utils/utils";
 import { InputType, getLabel } from "./parser/inputTypes";
 import {
   FormControl,
@@ -21,6 +20,7 @@ import {
   Checkbox,
   Button
 } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { useStyles } from "./styles/useStyles";
 import { Menu as MenuIcon, ChevronLeft as ChevronLeftIcon } from "@material-ui/icons";
@@ -36,10 +36,13 @@ function App() {
 
   // input data
   const [inputValue, setInputValue] = React.useState(DEFAULT_GRAPH_INPUT);
-  const [comboValue, setComboValue] = React.useState(0);
+  const [comboValue, setComboValue] = React.useState(InputType.EdgePairs);
   const [directed, setDirected] = React.useState(true);
   const [oneIndexed, setOneIndexed] = React.useState(false);
   const [customNodes, setCustomNodes] = React.useState(DEFAULT_CUSTOM_NODES_INPUT);
+
+  const [allNodes, setAllNodes] = React.useState<Array<string>>([]);
+  const [startNode, setStartNode] = React.useState("");
 
   // error handling
   const [graphInputError, setGraphInputError] = React.useState("");
@@ -69,15 +72,12 @@ function App() {
       return;
     }
 
-    const tempNodes: Array<any> = [];
-
-    for (let nodeId of Array.from(parsedValue.nodeSet)) {
-      let x = Utils.randomInRange(10, 800);
-      let y = Utils.randomInRange(10, 500);
-      tempNodes.push({ id: nodeId, x: x, y: y });
+    parsedValue.nodes = Array.from(parsedValue.nodeSet).map(nodeId => {
+      return { id: nodeId };
+    });
+    if (parsedValue.startValue) {
+      setStartNode(parsedValue.startValue);
     }
-
-    parsedValue.nodes = tempNodes;
     setGraphInputError("");
     setData(parsedValue);
   }, [inputValue, comboValue, oneIndexed]);
@@ -96,6 +96,22 @@ function App() {
     setCustomNodesInputError("");
     setCustomNodeSet(parsedValue);
   }, [customNodes]);
+
+  React.useEffect(() => {
+    let allNodesSet = new Set();
+    for (let n of data.nodes) {
+      allNodesSet.add(n.id);
+    }
+    for (let nodeId of Array.from(customNodeSet)) {
+      allNodesSet.add(nodeId);
+    }
+    let tempAllNodes = Array.from(allNodesSet) as Array<string>;
+    tempAllNodes.sort();
+    if (!allNodesSet.has(startNode)) {
+      setStartNode("");
+    }
+    setAllNodes(tempAllNodes);
+  }, [customNodeSet, data]);
 
   return (
     <div className={classes.root}>
@@ -188,6 +204,7 @@ function App() {
             >
               {Object.keys(InputType)
                 .filter(k => typeof InputType[k as any] !== "number")
+                .sort((a, b) => getLabel(parseInt(a)).localeCompare(getLabel(parseInt(b))))
                 .map(key => (
                   <MenuItem key={key} value={key}>
                     {getLabel(parseInt(key))}
@@ -222,6 +239,18 @@ function App() {
             label="Directed"
           />
           <FormControl className={classes.formControl}>
+            <Autocomplete
+              options={allNodes}
+              value={startNode && startNode.length > 0 ? startNode : null}
+              onChange={(event: React.ChangeEvent<{}>, newValue: string | null) => {
+                if (newValue) setStartNode(newValue);
+              }}
+              renderInput={(params: any) => (
+                <TextField {...params} label="Start Node" margin="normal" variant="outlined" />
+              )}
+            />
+          </FormControl>
+          <FormControl className={classes.formControl}>
             <TextField
               label="Custom Nodes Set"
               placeholder="Enter custom node set here."
@@ -250,6 +279,7 @@ function App() {
           inputType={comboValue}
           directed={directed}
           customNodes={customNodeSet}
+          startNode={startNode}
           data={data}
         />
       </main>
