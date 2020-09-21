@@ -3,13 +3,14 @@ import { Graph as D3Graph } from "react-d3-graph";
 import { getTypeConfig } from "../parser/inputTypes";
 import * as Utils from "../utils/utils";
 
-type GraphProps = {
+export type GraphProps = {
   inputType: number;
   data: any;
   id: string;
   directed: boolean;
   customNodes: Set<string>;
   startNode: string;
+  selectedLayout: number;
 };
 
 const Graph = ({
@@ -18,7 +19,8 @@ const Graph = ({
   id = "graph-id",
   directed,
   customNodes,
-  startNode
+  startNode,
+  selectedLayout
 }: GraphProps) => {
   // the graph configuration, you only need to pass down properties
   // that you want to override, otherwise default ones will be

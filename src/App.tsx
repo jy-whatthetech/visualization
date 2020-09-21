@@ -4,6 +4,7 @@ import "./App.css";
 import Graph from "./graph/Graph";
 import * as ParseUtils from "./parser/parseUtils";
 import { InputType, getLabel } from "./parser/inputTypes";
+import { LayoutType, getLayoutLabel } from "./layout/layoutTypes";
 import {
   FormControl,
   MenuItem,
@@ -17,13 +18,13 @@ import {
   Typography,
   TextField,
   FormControlLabel,
-  Checkbox,
-  Button
+  Checkbox
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { useStyles } from "./styles/useStyles";
 import { Menu as MenuIcon, ChevronLeft as ChevronLeftIcon } from "@material-ui/icons";
+import { LabelWithTooltip, ColorButton, SelectedButton } from "./utils/helperComponents";
 
 const DEFAULT_GRAPH_INPUT = "[[2,1],[3,1],[1,4]]";
 const DEFAULT_CUSTOM_NODES_INPUT = "[]";
@@ -57,6 +58,12 @@ function App() {
     ],
     links: [{ source: "PlaceHolderNode1", target: "PlaceHolderNode2", label: "TestLinkLabel" }]
   });
+
+  // layout
+  const [selectedLayout, setSelectedLayout] = React.useState(LayoutType.ForceLayout);
+
+  const graphInputRef = React.useRef<any>();
+  const customNodesInputRef = React.useRef<any>();
 
   // handle changes to graph input, input type, associated options (i.e. 1-indexed)
   React.useEffect(() => {
@@ -142,18 +149,32 @@ function App() {
           <Typography variant="h6" noWrap>
             Choose Layout:
           </Typography>
-          <Button className={classes.layoutButton} variant="contained">
-            Topological Sort
-          </Button>
-          <Button className={classes.layoutButton} variant="contained" color="primary">
-            Force Layout
-          </Button>
-          <Button className={classes.layoutButton} variant="contained" color="secondary">
-            Secondary
-          </Button>
-          <Button className={classes.layoutButton} variant="contained">
-            Tree
-          </Button>
+          {Object.keys(LayoutType)
+            .filter(k => typeof LayoutType[k as any] !== "number")
+            .map(key => {
+              let currLayoutType = parseInt(key);
+              return currLayoutType === selectedLayout ? (
+                <SelectedButton
+                  className={classes.layoutButton}
+                  variant="contained"
+                  onClick={() => {
+                    setSelectedLayout(currLayoutType);
+                  }}
+                >
+                  {getLayoutLabel(parseInt(key))}
+                </SelectedButton>
+              ) : (
+                <ColorButton
+                  className={classes.layoutButton}
+                  variant="contained"
+                  onClick={() => {
+                    setSelectedLayout(currLayoutType);
+                  }}
+                >
+                  {getLayoutLabel(parseInt(key))}
+                </ColorButton>
+              );
+            })}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -181,7 +202,15 @@ function App() {
           <Divider />
           <FormControl className={classes.formControl}>
             <TextField
-              label="Graph Input"
+              InputLabelProps={{ style: { pointerEvents: "auto" } }}
+              label={
+                <LabelWithTooltip
+                  label={"Graph Input"}
+                  tooltipText={"Enter the text representation of the graph."}
+                  inputRef={graphInputRef}
+                />
+              }
+              inputRef={graphInputRef}
               placeholder="Please enter graph input."
               multiline
               rows={3}
@@ -257,7 +286,17 @@ function App() {
           </FormControl>
           <FormControl className={classes.formControl}>
             <TextField
-              label="Custom Nodes Set"
+              InputLabelProps={{ style: { pointerEvents: "auto" } }}
+              label={
+                <LabelWithTooltip
+                  label={"Custom Node Set"}
+                  tooltipText={
+                    "(Optional) Specify if the set of nodes is described in a separate list from the edges."
+                  }
+                  inputRef={customNodesInputRef}
+                />
+              }
+              inputRef={customNodesInputRef}
               placeholder="Enter custom node set here."
               multiline
               rows={3}
@@ -286,6 +325,7 @@ function App() {
           customNodes={customNodeSet}
           startNode={startNode}
           data={data}
+          selectedLayout={selectedLayout}
         />
       </main>
     </div>
