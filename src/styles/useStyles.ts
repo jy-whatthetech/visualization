@@ -40,10 +40,16 @@ export const useStyles = makeStyles(theme => ({
     width: "100%"
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
+    flex: 1
   },
   hide: {
     display: "none"
+  },
+  rotateButton: {
+    display: "flex",
+    flex: 1,
+    justifyContent: "flex-end"
   },
   mainContent: {
     flexGrow: 1,

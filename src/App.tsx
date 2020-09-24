@@ -23,7 +23,11 @@ import {
 import { Autocomplete } from "@material-ui/lab";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { useStyles } from "./styles/useStyles";
-import { Menu as MenuIcon, ChevronLeft as ChevronLeftIcon } from "@material-ui/icons";
+import {
+  Menu as MenuIcon,
+  ChevronLeft as ChevronLeftIcon,
+  RotateRight as RotateRightIcon
+} from "@material-ui/icons";
 import { LabelWithTooltip, ColorButton, SelectedButton } from "./utils/helperComponents";
 
 const DEFAULT_GRAPH_INPUT = "[[2,1],[3,1],[1,4]]";
@@ -175,6 +179,17 @@ function App() {
                 </ColorButton>
               );
             })}
+          <div className={classes.rotateButton}>
+            <IconButton
+              color="inherit"
+              onClick={() => {
+                // TODO: rotate layout
+              }}
+              edge="start"
+            >
+              <RotateRightIcon />
+            </IconButton>
+          </div>
         </Toolbar>
       </AppBar>
       <Drawer
