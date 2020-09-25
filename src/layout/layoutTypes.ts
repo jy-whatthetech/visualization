@@ -1,4 +1,5 @@
 import { InputType } from "../parser/inputTypes";
+import { layoutTree } from "./treeLayout";
 
 export enum LayoutType {
   Tree,
@@ -33,5 +34,15 @@ export function getDefaultLayout({ inputType, data, directed, customNodes, start
       return LayoutType.Tree;
     default:
       return LayoutType.TopologicalSort;
+  }
+}
+
+export function performLayout(type: number, data: any) {
+  switch (type) {
+    case LayoutType.Tree:
+      return layoutTree(data);
+    default:
+      console.log("unhandled layout type");
+      return;
   }
 }
