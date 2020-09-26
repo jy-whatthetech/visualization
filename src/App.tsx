@@ -33,6 +33,21 @@ import { LabelWithTooltip, ColorButton, SelectedButton } from "./utils/helperCom
 const DEFAULT_GRAPH_INPUT = "[[2,1],[3,1],[1,4]]";
 const DEFAULT_CUSTOM_NODES_INPUT = "[]";
 
+export type DataType = {
+  nodes: Array<{
+    id: string;
+    label: string;
+    x?: number;
+    y?: number;
+  }>;
+  links: Array<{
+    source: string;
+    target: string;
+    label?: string;
+  }>;
+  startNode?: string;
+};
+
 function App() {
   const classes = useStyles();
 
@@ -47,7 +62,7 @@ function App() {
   const [customNodes, setCustomNodes] = React.useState(DEFAULT_CUSTOM_NODES_INPUT);
 
   const [allNodes, setAllNodes] = React.useState<Array<string>>([]);
-  const [startNode, setStartNode] = React.useState("");
+  const [startNode, setStartNode] = React.useState<string | null>(null);
 
   // error handling
   const [graphInputError, setGraphInputError] = React.useState("");
@@ -55,10 +70,10 @@ function App() {
 
   // graph payload (with minimalist structure)
   const [customNodeSet, setCustomNodeSet] = React.useState(new Set<string>());
-  const [data, setData] = React.useState({
+  const [data, setData] = React.useState<DataType>({
     nodes: [
-      { id: "PlaceHolderNode1", x: 50, y: 50 },
-      { id: "PlaceHolderNode2", x: 100, y: 100 }
+      { id: "PlaceHolderNode1", label: "PlaceHolderNode1", x: 50, y: 50 },
+      { id: "PlaceHolderNode2", label: "PlaceHolderNode2", x: 100, y: 100 }
     ],
     links: [{ source: "PlaceHolderNode1", target: "PlaceHolderNode2", label: "TestLinkLabel" }]
   });
@@ -93,6 +108,8 @@ function App() {
     });
     if (parsedValue.startNode) {
       setStartNode(parsedValue.startNode);
+    } else {
+      setStartNode(null);
     }
     setGraphInputError("");
     setData(parsedValue);
@@ -124,7 +141,7 @@ function App() {
     let tempAllNodes = Array.from(allNodesSet) as Array<string>;
     tempAllNodes.sort();
     if (!allNodesSet.has(startNode)) {
-      setStartNode("");
+      setStartNode(null);
     }
     setAllNodes(tempAllNodes);
   }, [customNodeSet, data]);

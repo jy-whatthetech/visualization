@@ -42,7 +42,7 @@ export function performLayout(type: number, data: any) {
     case LayoutType.Tree:
       return layoutTree(data);
     default:
-      console.log("unhandled layout type");
+      console.error("unhandled layout type");
       return;
   }
 }

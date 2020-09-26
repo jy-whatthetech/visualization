@@ -2,6 +2,7 @@ import React from "react";
 import { Graph as D3Graph } from "react-d3-graph";
 import { getTypeConfig } from "../parser/inputTypes";
 import * as Utils from "../utils/utils";
+import { performLayout } from "../layout/layoutTypes";
 
 export type GraphProps = {
   inputType: number;
@@ -9,7 +10,7 @@ export type GraphProps = {
   id: string;
   directed: boolean;
   customNodes: Set<string>;
-  startNode: string;
+  startNode: string | null;
   selectedLayout: number;
 };
 
@@ -41,10 +42,12 @@ const Graph = ({
   }
 
   // assign positions to all nodes
+  data.startNode = startNode;
   for (let n of data.nodes) {
     n.x = Utils.randomInRange(10, 700);
     n.y = Utils.randomInRange(10, 350);
   }
+  performLayout(selectedLayout, data);
 
   const myConfig = {
     nodeHighlightBehavior: true,
