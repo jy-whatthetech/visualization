@@ -30,22 +30,16 @@ import {
 } from "@material-ui/icons";
 import { LabelWithTooltip, ColorButton, SelectedButton } from "./utils/helperComponents";
 
-const DEFAULT_GRAPH_INPUT = "[[2,1],[3,1],[1,4]]";
-const DEFAULT_CUSTOM_NODES_INPUT = "[]";
+const DEFAULT_GRAPH_INPUT = "[5,4,7,3,null,2,null,-1,null,9]";
+const DEFAULT_CUSTOM_NODES_INPUT = "";
 
-export type DataType = {
-  nodes: Array<{
-    id: string;
-    label: string;
-    x?: number;
-    y?: number;
-  }>;
-  links: Array<{
-    source: string;
-    target: string;
-    label?: string;
-  }>;
+export type MyGraphNodeType = { id: string; label: string; x?: number; y?: number };
+export type MyGraphLinkType = { source: string; target: string; label?: string };
+export type MyDataType = {
+  nodes: Array<MyGraphNodeType>;
+  links: Array<MyGraphLinkType>;
   startNode?: string;
+  directed?: boolean;
 };
 
 function App() {
@@ -56,7 +50,7 @@ function App() {
 
   // input data
   const [inputValue, setInputValue] = React.useState(DEFAULT_GRAPH_INPUT);
-  const [comboValue, setComboValue] = React.useState(InputType.EdgePairs);
+  const [comboValue, setComboValue] = React.useState(InputType.LeetcodeTree);
   const [directed, setDirected] = React.useState(true);
   const [oneIndexed, setOneIndexed] = React.useState(false);
   const [customNodes, setCustomNodes] = React.useState(DEFAULT_CUSTOM_NODES_INPUT);
@@ -70,7 +64,7 @@ function App() {
 
   // graph payload (with minimalist structure)
   const [customNodeSet, setCustomNodeSet] = React.useState(new Set<string>());
-  const [data, setData] = React.useState<DataType>({
+  const [data, setData] = React.useState<MyDataType>({
     nodes: [
       { id: "PlaceHolderNode1", label: "PlaceHolderNode1", x: 50, y: 50 },
       { id: "PlaceHolderNode2", label: "PlaceHolderNode2", x: 100, y: 100 }
@@ -79,7 +73,7 @@ function App() {
   });
 
   // layout
-  const [selectedLayout, setSelectedLayout] = React.useState(LayoutType.ForceLayout);
+  const [selectedLayout, setSelectedLayout] = React.useState(LayoutType.Tree);
 
   const graphInputRef = React.useRef<any>();
   const customNodesInputRef = React.useRef<any>();
@@ -140,9 +134,6 @@ function App() {
     }
     let tempAllNodes = Array.from(allNodesSet) as Array<string>;
     tempAllNodes.sort();
-    if (!allNodesSet.has(startNode)) {
-      setStartNode(null);
-    }
     setAllNodes(tempAllNodes);
   }, [customNodeSet, data]);
 

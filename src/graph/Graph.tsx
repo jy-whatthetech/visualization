@@ -43,6 +43,7 @@ const Graph = ({
 
   // assign positions to all nodes
   data.startNode = startNode;
+  data.directed = directed;
   for (let n of data.nodes) {
     n.x = Utils.randomInRange(10, 700);
     n.y = Utils.randomInRange(10, 350);
