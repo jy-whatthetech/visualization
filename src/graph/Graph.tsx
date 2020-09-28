@@ -4,6 +4,11 @@ import { getTypeConfig } from "../parser/inputTypes";
 import * as Utils from "../utils/utils";
 import { performLayout } from "../layout/layoutTypes";
 
+export const DEFAULT_GRAPH_WIDTH = 700;
+export const DEFAULT_GRAPH_HEIGHT = 350;
+export const DEFAULT_LEFT_PADDING = 100;
+export const DEFAULT_TOP_PADDING = 50;
+
 export type GraphProps = {
   inputType: number;
   data: any;
@@ -45,10 +50,10 @@ const Graph = ({
   data.startNode = startNode;
   data.directed = directed;
   for (let n of data.nodes) {
-    n.x = Utils.randomInRange(10, 700);
-    n.y = Utils.randomInRange(10, 350);
+    n.x = Utils.randomInRange(10, DEFAULT_GRAPH_WIDTH);
+    n.y = Utils.randomInRange(10, DEFAULT_GRAPH_HEIGHT);
   }
-  performLayout(selectedLayout, data);
+  performLayout(selectedLayout, data, inputType);
 
   const myConfig = {
     nodeHighlightBehavior: true,

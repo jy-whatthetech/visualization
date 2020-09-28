@@ -1,5 +1,6 @@
 import parseJson from "parse-json";
 import { InputType, getTypeConfig } from "./inputTypes";
+import { TreeNode } from "../layout/treeLayout";
 
 export function processInput(input: string, type: number, options?: any): any {
   const config = getTypeConfig(type);
@@ -261,8 +262,13 @@ export function parseBinaryTreeJSON(config: { input: string }) {
   const nodeSet = new Set<string>();
   const links = [];
 
+  const idToNode: any = {};
+
   for (let node of nodes) {
     nodeSet.add(node.id);
+    const tNode = new TreeNode(node.id);
+    idToNode[node.id] = tNode;
+
     if (node.left) {
       links.push({ source: node.id, target: node.left });
     }
@@ -271,7 +277,26 @@ export function parseBinaryTreeJSON(config: { input: string }) {
     }
   }
 
-  return { startNode: jsonObj.tree.root, nodeSet: nodeSet, links: links };
+  // second traverse: construct links and mark isRightChild
+  for (let node of nodes) {
+    const tNode = idToNode[node.id];
+
+    if (node.left) {
+      tNode.children.push(idToNode[node.left]);
+    }
+    if (node.right) {
+      tNode.children.push(idToNode[node.right]);
+      idToNode[node.right].isRightChild = true;
+    }
+  }
+
+  return {
+    startNode: jsonObj.tree.root,
+    tree: idToNode[jsonObj.tree.root],
+    idToTreeNode: idToNode,
+    nodeSet: nodeSet,
+    links: links
+  };
 }
 
 // Binary tree/heap in array form (child is at 2n+1 and 2n+2)
@@ -303,10 +328,15 @@ export function parseBinaryHeap(config: { input: string }) {
     nodeSet.add(key);
     return key;
   });
+  const idToNode: any = {};
   let root: string | undefined;
   for (let i = 0; i < sp.length; i++) {
     const src = sp[i];
     nodeSet.add(src);
+    if (!idToNode.hasOwnProperty(src)) {
+      const tNode = new TreeNode(src);
+      idToNode[src] = tNode;
+    }
     if (i === 0) {
       root = src;
     }
@@ -314,13 +344,33 @@ export function parseBinaryHeap(config: { input: string }) {
     let leftChildInd = i * 2 + 1;
     let rightChildInd = i * 2 + 2;
     if (leftChildInd < sp.length) {
-      links.push({ source: src, target: leftChildInd + " index" });
+      const targetId = leftChildInd + " index";
+      // link child node
+      const tNode = new TreeNode(targetId);
+      idToNode[targetId] = tNode;
+      idToNode[src].children.push(tNode);
+
+      links.push({ source: src, target: targetId });
     }
     if (rightChildInd < sp.length) {
-      links.push({ source: src, target: rightChildInd + " index" });
+      const targetId = rightChildInd + " index";
+      // link child node
+      const tNode = new TreeNode(targetId);
+      idToNode[targetId] = tNode;
+      idToNode[src].children.push(tNode);
+      tNode.isRightChild = true;
+
+      links.push({ source: src, target: targetId });
     }
   }
-  return { startNode: root, nodeSet: nodeSet, nodeToLabel: nodeToLabel, links: links };
+  return {
+    startNode: root,
+    tree: idToNode[root as string],
+    idToTreeNode: idToNode,
+    nodeSet: nodeSet,
+    nodeToLabel: nodeToLabel,
+    links: links
+  };
 }
 
 // Leetcode's binary tree serialization
@@ -347,12 +397,16 @@ export function parseLeetcodeTree(config: { input: string }) {
     return { startNode: input, nodeSet: nodeSet, links: links };
   }
 
+  const idToNode: any = {};
+
   let sp = input.split(",");
   sp = sp.map((elem, ind) => {
     let trimmed = cleanseInput(elem);
     let key = ind + " index";
     if (trimmed !== "null") {
       nodeSet.add(key);
+      const tNode = new TreeNode(key);
+      idToNode[key] = tNode;
       nodeToLabel[key] = trimmed;
     }
     return elem.trim();
@@ -366,8 +420,11 @@ export function parseLeetcodeTree(config: { input: string }) {
     if (ind >= sp.length) break;
     let trg = sp[ind];
     if (trg !== "null") {
-      // connect add to queue
+      // left child
+      // connect and add to queue
       trg = ind + " index";
+
+      idToNode[src as string].children.push(idToNode[trg]);
       links.push({ source: src, target: trg });
       queue.push(trg);
     }
@@ -375,14 +432,25 @@ export function parseLeetcodeTree(config: { input: string }) {
     if (ind >= sp.length) break;
     trg = sp[ind];
     if (trg !== "null") {
+      // right child
       trg = ind + " index";
+
+      idToNode[src as string].children.push(idToNode[trg]);
+      idToNode[trg].isRightChild = true;
       links.push({ source: src, target: trg });
       queue.push(trg);
     }
     ind++;
   }
 
-  return { startNode: "0 index", nodeSet: nodeSet, nodeToLabel: nodeToLabel, links: links };
+  return {
+    startNode: "0 index",
+    tree: idToNode["0 index"],
+    idToTreeNode: idToNode,
+    nodeSet: nodeSet,
+    nodeToLabel: nodeToLabel,
+    links: links
+  };
 }
 
 export function parseNodes(input: string) {

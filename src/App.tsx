@@ -29,6 +29,7 @@ import {
   RotateRight as RotateRightIcon
 } from "@material-ui/icons";
 import { LabelWithTooltip, ColorButton, SelectedButton } from "./utils/helperComponents";
+import { TreeNode } from "./layout/treeLayout";
 
 const DEFAULT_GRAPH_INPUT = "[5,4,7,3,null,2,null,-1,null,9]";
 const DEFAULT_CUSTOM_NODES_INPUT = "";
@@ -40,6 +41,8 @@ export type MyDataType = {
   links: Array<MyGraphLinkType>;
   startNode?: string;
   directed?: boolean;
+  tree?: TreeNode;
+  idToTreeNode?: { [key: string]: TreeNode };
 };
 
 function App() {

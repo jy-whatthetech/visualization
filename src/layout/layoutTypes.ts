@@ -1,5 +1,6 @@
 import { InputType } from "../parser/inputTypes";
 import { layoutTree } from "./treeLayout";
+import { MyDataType } from "../App";
 
 export enum LayoutType {
   Tree,
@@ -37,10 +38,10 @@ export function getDefaultLayout({ inputType, data, directed, customNodes, start
   }
 }
 
-export function performLayout(type: number, data: any) {
-  switch (type) {
+export function performLayout(layoutType: number, data: MyDataType, inputType: number) {
+  switch (layoutType) {
     case LayoutType.Tree:
-      return layoutTree(data);
+      return layoutTree(data, inputType);
     default:
       console.error("unhandled layout type");
       return;

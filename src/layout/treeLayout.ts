@@ -1,151 +1,151 @@
 import { MyDataType } from "../App";
 import * as LayoutUtils from "./layoutUtils";
+import * as Graph from "../graph/Graph";
+import { InputType } from "../parser/inputTypes";
 
-export function layoutTree(data: MyDataType) {
-  let { startNode, nodes, links, directed } = data;
+const DEFAULT_PADDING = 0.3;
+
+type IdToNode = {
+  [key: string]: TreeNode;
+};
+
+function isBinaryTree(inputType: number): boolean {
+  return (
+    inputType === InputType.BinaryTreeObject ||
+    inputType === InputType.BinaryHeap ||
+    inputType === InputType.LeetcodeTree
+  );
+}
+
+export function layoutTree(data: MyDataType, inputType: number) {
+  let { startNode, nodes, links, directed, tree, idToTreeNode } = data;
+  let isBinary = isBinaryTree(inputType);
 
   const edgeMap = LayoutUtils.convertToEdgeMap(links, !!directed);
 
   if (!startNode || startNode.length === 0) {
     startNode = LayoutUtils.deriveStartNode(nodes, edgeMap);
   }
-
   // construct tree
-  const [root, idToTreeNode] = constructTreeObject(edgeMap, startNode);
+  let arr = constructTreeObject(edgeMap, startNode);
+  let root: TreeNode = arr[0] as TreeNode;
+  let idToNode: IdToNode = arr[1] as IdToNode;
+  if (tree) {
+    root = tree;
+    idToNode = idToTreeNode as IdToNode;
+  }
 
-  //   class DrawTree(object):
-  //     def __init__(self, tree, parent=None, depth=0, number=1):
-  //         self.x = -1.
-  //         self.y = depth
-  //         self.tree = tree
-  //         self.children = [DrawTree(c, self, depth+1, i+1)
-  //                          for i, c
-  //                          in enumerate(tree.children)]
-  //         self.parent = parent
-  //         self.thread = None
-  //         self.offset = 0
-  //         self.ancestor = self
-  //         self.change = self.shift = 0
-  //         self._lmost_sibling = None
-  //         #this is the number of the node in its group of siblings 1..n
-  //         self.number = number
+  // run Buchheim algorithm!
+  let result = runBuchheim(root as TreeNode, DEFAULT_PADDING, isBinary, 0);
+  console.log("--- RAN BUCHHEIM LAYOUT. RESULT IS: ---");
+  console.log(result);
 
-  //     def left_brother(self):
-  //         n = None
-  //         if self.parent:
-  //             for node in self.parent.children:
-  //                 if node == self: return n
-  //                 else:            n = node
-  //         return n
-
-  //     def get_lmost_sibling(self):
-  //         if not self._lmost_sibling and self.parent and self != \
-  //         self.parent.children[0]:
-  //             self._lmost_sibling = self.parent.children[0]
-  //         return self._lmost_sibling
-  //     leftmost_sibling = property(get_lmost_sibling)
-
-  // def buchheim(tree):
-  //     dt = firstwalk(tree)
-  //     second_walk(dt)
-  //     return dt
-
-  // def firstwalk(v, distance=1.):
-  //     if len(v.children) == 0:
-  //         if v.leftmost_sibling:
-  //             v.x = v.left_brother().x + distance
-  //         else:
-  //             v.x = 0.
-  //     else:
-  //         default_ancestor = v.children[0]
-  //         for w in v.children:
-  //             firstwalk(w)
-  //             default_ancestor = apportion(w, default_ancestor,
-  //                                          distance)
-  //         execute_shifts(v)
-
-  //         midpoint = (v.children[0].x + v.children[-1].x) / 2
-
-  //         ell = v.children[0]
-  //         arr = v.children[-1]
-  //         w = v.left_brother()
-  //         if w:
-  //             v.x = w.x + distance
-  //             v.mod = v.x - midpoint
-  //         else:
-  //             v.x = midpoint
-  //     return v
-
-  // def apportion(v, default_ancestor, distance):
-  //     w = v.left_brother()
-  //     if w is not None:
-  //         #in buchheim notation:
-  //         #i == inner; o == outer; r == right; l == left;
-  //         vir = vor = v
-  //         vil = w
-  //         vol = v.leftmost_sibling
-  //         sir = sor = v.mod
-  //         sil = vil.mod
-  //         sol = vol.mod
-  //         while vil.right() and vir.left():
-  //             vil = vil.right()
-  //             vir = vir.left()
-  //             vol = vol.left()
-  //             vor = vor.right()
-  //             vor.ancestor = v
-  //             shift = (vil.x + sil) - (vir.x + sir) + distance
-  //             if shift > 0:
-  //                 a = ancestor(vil, v, default_ancestor)
-  //                 move_subtree(a, v, shift)
-  //                 sir = sir + shift
-  //                 sor = sor + shift
-  //             sil += vil.mod
-  //             sir += vir.mod
-  //             sol += vol.mod
-  //             sor += vor.mod
-  //         if vil.right() and not vor.right():
-  //             vor.thread = vil.right()
-  //             vor.mod += sil - sor
-  //         else:
-  //             if vir.left() and not vol.left():
-  //                 vol.thread = vir.left()
-  //                 vol.mod += sir - sol
-  //             default_ancestor = v
-  //     return default_ancestor
-
-  // def move_subtree(wl, wr, shift):
-  //     subtrees = wr.number - wl.number
-  //     wr.change -= shift / subtrees
-  //     wr.shift += shift
-  //     wl.change += shift / subtrees
-  //     wr.x += shift
-  //     wr.mod += shift
-
-  // def execute_shifts(v):
-  //     shift = change = 0
-  //     for w in v.children[::-1]:
-  //         w.x += shift
-  //         w.mod += shift
-  //         change += w.change
-  //         shift += w.shift + change
-
-  // def ancestor(vil, v, default_ancestor):
-  //     if vil.ancestor in v.parent.children:
-  //         return vil.ancestor
-  //     else:
-  //         return default_ancestor
-
-  // def second_walk(v, m=0, depth=0):
-  //     v.x += m
-  //     v.y = depth
-
-  //     for w in v.children:
-  //         second_walk(w, m + v.mod, depth+1, min)
+  // assign positions to actual nodes
+  for (let node of nodes) {
+    // normalize node positions based on graph size and padding
+    // TODO: handle rotation (normalization needs to handle rotation)
+    const nodeId = node.id;
+    const tNode = idToNode[nodeId];
+    let realx = Graph.DEFAULT_LEFT_PADDING + 100 * tNode.x;
+    let realy = Graph.DEFAULT_TOP_PADDING + 100 * tNode.y;
+    node.x = realx;
+    node.y = realy;
+  }
+  console.log(nodes);
 }
 
-function firstwalk(root: TreeNode, distance = 1) {
+function runBuchheim(root: TreeNode, padding: number, isBinary: boolean, depth: number) {
+  // if no children, return self at position 0
+  root.y = depth;
   if (root.children.length === 0) {
-    // this is a leaf node
+    root.x = 0;
+    return root;
+  }
+  // if only one child, put it directly above its one child
+  // (unless binary tree, then we must respect left/right child placements)
+  if (root.children.length === 1) {
+    runBuchheim(root.children[0], padding, isBinary, depth + 1);
+    root.x = root.children[0].x;
+    if (isBinary) {
+      if (root.children[0].isRightChild) {
+        if (root.children[0].x < 0.5) {
+          const distanceToMove = 0.5 - root.children[0].x;
+          moveSubtree(root.children[0], distanceToMove);
+        }
+        root.x = root.children[0].x - 0.5;
+      } else {
+        // child is a left child
+        root.x = root.children[0].x + 0.5;
+      }
+    }
+    return root;
+  }
+
+  let prevRightContour: Array<number> = [];
+  for (let child of root.children) {
+    runBuchheim(child, padding, isBinary, depth + 1);
+    let [leftContour, rightContour] = getContours(child);
+    if (child !== root.children[0]) {
+      const minShift = getMinimumShift(prevRightContour, leftContour, padding);
+      // perform the move
+      moveSubtree(child, minShift);
+      [leftContour, rightContour] = getContours(child);
+    }
+    prevRightContour = rightContour;
+  }
+
+  // parent should be in middle of all children
+  const midpoint = (root.children[0].x + root.children[root.children.length - 1].x) / 2;
+  root.x = midpoint;
+
+  return root;
+}
+
+function getContours(root: TreeNode): Array<Array<number>> {
+  // bfs to get the min and max x position of each level
+  const left: Array<number> = [];
+  const right: Array<number> = [];
+
+  let curr = [root];
+  while (curr.length > 0) {
+    let next: Array<TreeNode> = [];
+    let lo = 999999999;
+    let hi = -999999999;
+    for (let node of curr) {
+      for (let child of node.children) {
+        next.push(child);
+      }
+      lo = Math.min(lo, node.x);
+      hi = Math.max(hi, node.x);
+    }
+    left.push(lo);
+    right.push(hi);
+    curr = next;
+  }
+  return [left, right];
+}
+
+function getMinimumShift(rightContour: Array<number>, leftContour: Array<number>, padding: number) {
+  if (rightContour.length === 0 || leftContour.length === 0) return 0;
+  const smallerSize = Math.min(rightContour.length, leftContour.length);
+  let res = 0;
+  if (leftContour[0] - rightContour[0] < 1) {
+    res = 1 - (leftContour[0] - rightContour[0]);
+  }
+  for (let i = 1; i < smallerSize; i++) {
+    const l = rightContour[i];
+    const r = leftContour[i];
+    if (r - l < padding) {
+      res = Math.max(res, padding - (r - l));
+    }
+  }
+  return res;
+}
+
+function moveSubtree(root: TreeNode, shift: number) {
+  root.x += shift;
+  for (let child of root.children) {
+    moveSubtree(child, shift);
   }
 }
 
@@ -153,7 +153,7 @@ function firstwalk(root: TreeNode, distance = 1) {
 function constructTreeObject(
   edgeMap: LayoutUtils.EdgeMap,
   startNode: string
-): Array<TreeNode | { [key: string]: TreeNode }> {
+): Array<TreeNode | IdToNode> {
   // bfs starting from start node
   let queue: Array<TreeNode> = [];
   let root = new TreeNode(startNode);
@@ -181,30 +181,27 @@ function constructTreeObject(
       tempNode.parent = front;
       queue.push(tempNode);
 
-      // populate left most sibling
-      if (front.children.length > 1) {
-        tempNode.leftmost_sibling = front.children[0];
-      }
-
       idToTreeNode[child] = tempNode;
     }
   }
   return [root, idToTreeNode];
 }
 
-interface TreeNode {
+export interface TreeNode {
   value: string;
   children: Array<TreeNode>;
   parent: TreeNode | null;
-
-  // Buchheim Tree properties
-  leftmost_sibling: null | TreeNode;
+  x: number;
+  y: number;
+  isRightChild: boolean;
 }
-class TreeNode {
-  constructor(value: string) {
+export class TreeNode {
+  constructor(value: string, isRightChild = false) {
     this.value = value;
     this.children = [];
     this.parent = null;
-    this.leftmost_sibling = null;
+    this.x = 0;
+    this.y = 0;
+    this.isRightChild = isRightChild;
   }
 }
