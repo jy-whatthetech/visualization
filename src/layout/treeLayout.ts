@@ -20,28 +20,45 @@ function isBinaryTree(inputType: number): boolean {
 export function layoutTree(data: MyDataType, inputType: number) {
   let { startNode, nodes, links, directed, tree, idToTreeNode } = data;
   let isBinary = isBinaryTree(inputType);
+  if (!isBinary) {
+    directed = false;
+  }
 
   const edgeMap = LayoutUtils.convertToEdgeMap(links, !!directed);
+  let idToNode: IdToNode = {};
+  // run Buchheim algorithm on all disconnected components
+  let rightMostX = 0;
+  const disconnectedComponents = LayoutUtils.getDisconnectedComponents(nodes, links);
 
-  if (!startNode || startNode.length === 0) {
-    startNode = LayoutUtils.deriveStartNode(nodes, edgeMap);
-  }
-  // construct tree
-  let arr = constructTreeObject(edgeMap, startNode);
-  let root: TreeNode = arr[0] as TreeNode;
-  let idToNode: IdToNode = arr[1] as IdToNode;
-  if (tree) {
-    root = tree;
-    idToNode = idToTreeNode as IdToNode;
-  }
+  for (let comp of disconnectedComponents) {
+    // derive the start node based on if user specified it
+    let actualStartNode: string | null = null;
+    if (startNode && startNode.length > 0) {
+      if (LayoutUtils.isStartNodeInComponent(startNode, comp)) {
+        actualStartNode = startNode;
+      }
+    }
+    if (!actualStartNode) {
+      actualStartNode = LayoutUtils.deriveStartNode(comp, edgeMap);
+    }
 
-  // run Buchheim algorithm!
-  let result = runBuchheim(root as TreeNode, DEFAULT_PADDING, isBinary, 0);
+    // construct the treeObject
+    let root = tree;
+    if (tree) {
+      idToNode = idToTreeNode as IdToNode;
+    }
+    if (!root) {
+      root = constructTreeObject(edgeMap, actualStartNode, idToNode);
+    }
+
+    let shiftAmount = rightMostX > 0 ? rightMostX + DEFAULT_PADDING : 0;
+    rightMostX = runBuchheim(root, DEFAULT_PADDING, isBinary, 0);
+    moveSubtree(root, shiftAmount);
+  }
 
   // assign positions to actual nodes
   for (let node of nodes) {
     // normalize node positions based on graph size and padding
-    // TODO: handle rotation (normalization needs to handle rotation)
     const nodeId = node.id;
     const tNode = idToNode[nodeId];
     if (tNode) {
@@ -58,7 +75,7 @@ function runBuchheim(root: TreeNode, padding: number, isBinary: boolean, depth: 
   root.y = depth;
   if (root.children.length === 0) {
     root.x = 0;
-    return root;
+    return root.x;
   }
   // if only one child, put it directly above its one child
   // (unless binary tree, then we must respect left/right child placements)
@@ -77,7 +94,12 @@ function runBuchheim(root: TreeNode, padding: number, isBinary: boolean, depth: 
         root.x = root.children[0].x + 0.5;
       }
     }
-    return root;
+
+    let [leftContour, rightContour] = getContours(root);
+    let rightMostX = root.x;
+    for (let r of rightContour) {
+      rightMostX = Math.max(rightMostX, r);
+    }
   }
 
   let prevRightContour: Array<number> = [];
@@ -105,7 +127,12 @@ function runBuchheim(root: TreeNode, padding: number, isBinary: boolean, depth: 
   const midpoint = (root.children[0].x + root.children[root.children.length - 1].x) / 2;
   root.x = midpoint;
 
-  return root;
+  // return rightmost point of tree
+  let rightMostX = root.x;
+  for (let r of prevRightContour) {
+    rightMostX = Math.max(rightMostX, r);
+  }
+  return rightMostX;
 }
 
 function getContours(root: TreeNode): Array<Array<number>> {
@@ -159,16 +186,16 @@ function moveSubtree(root: TreeNode, shift: number) {
 // recursively constrcut tree object
 function constructTreeObject(
   edgeMap: LayoutUtils.EdgeMap,
-  startNode: string
-): Array<TreeNode | IdToNode> {
+  startNode: string,
+  idToNode: IdToNode
+): TreeNode {
   // bfs starting from start node
   let queue: Array<TreeNode> = [];
   let root = new TreeNode(startNode);
   queue.push(root);
   let seen = new Set<string>();
   seen.add(startNode);
-  let idToTreeNode: { [key: string]: TreeNode } = {};
-  idToTreeNode[startNode] = root;
+  idToNode[startNode] = root;
 
   while (queue.length > 0) {
     let front: TreeNode = queue.shift() as TreeNode;
@@ -188,10 +215,10 @@ function constructTreeObject(
       tempNode.parent = front;
       queue.push(tempNode);
 
-      idToTreeNode[child] = tempNode;
+      idToNode[child] = tempNode;
     }
   }
-  return [root, idToTreeNode];
+  return root;
 }
 
 export interface TreeNode {

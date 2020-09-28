@@ -2,13 +2,13 @@ import React from "react";
 import { Graph as D3Graph } from "react-d3-graph";
 import { getTypeConfig } from "../parser/inputTypes";
 import * as Utils from "../utils/utils";
+import * as LayoutUtils from "../layout/layoutUtils";
 import { performLayout } from "../layout/layoutTypes";
 
-export const DEFAULT_GRAPH_WIDTH = 700;
-export const DEFAULT_GRAPH_HEIGHT = 350;
 export const DEFAULT_LEFT_PADDING = 100;
 export const DEFAULT_RIGHT_PADDING = 100;
 export const DEFAULT_TOP_PADDING = 50;
+export const DEFAULT_EXTRA_NODE_SPACING = 50;
 
 export type GraphProps = {
   inputType: number;
@@ -60,32 +60,39 @@ const Graph = ({
   const graphPaneHeight = dimensions.height - 120;
   const graphPaneWidth = drawerOpen ? dimensions.width - 350 : dimensions.width - 50;
 
+  // generate random positions by default (for testing purposes only)
+  for (let n of data.nodes) {
+    n.x = Utils.randomInRange(DEFAULT_LEFT_PADDING, graphPaneWidth);
+    n.y = Utils.randomInRange(DEFAULT_TOP_PADDING, graphPaneHeight);
+  }
+
   // add nodes from customNodes that don't already exist
-  let extraNodes = [];
+  let extraNodes = [...LayoutUtils.getExtraNodes(data.nodes, data.links)];
   if (customNodes && customNodes.size > 0) {
     const seen = new Set();
     for (let n of data.nodes) {
       seen.add(n.id);
     }
     // add if not in seen
-    let x = graphPaneWidth - DEFAULT_RIGHT_PADDING;
-    let y = DEFAULT_TOP_PADDING;
     for (let nodeId of Array.from(customNodes)) {
       if (!seen.has(nodeId)) {
         seen.add(nodeId);
-        extraNodes.push({ id: nodeId, label: nodeId, x: x, y: y });
-        y += 50;
+        extraNodes.push({ id: nodeId, label: nodeId });
       }
     }
   }
+  // calculate positions for extra nodes
+  let x = graphPaneWidth - DEFAULT_RIGHT_PADDING;
+  let y = DEFAULT_TOP_PADDING;
+  for (let node of extraNodes) {
+    node.x = x;
+    node.y = y;
+    y += DEFAULT_EXTRA_NODE_SPACING;
+  }
 
-  // assign positions to all nodes
+  // run layout on all connectd components
   data.startNode = startNode;
   data.directed = directed;
-  for (let n of data.nodes) {
-    n.x = Utils.randomInRange(DEFAULT_LEFT_PADDING, DEFAULT_GRAPH_WIDTH);
-    n.y = Utils.randomInRange(DEFAULT_TOP_PADDING, DEFAULT_GRAPH_HEIGHT);
-  }
   performLayout(selectedLayout, data, inputType);
 
   const myConfig = {
@@ -159,7 +166,7 @@ const Graph = ({
   const argNodes = [];
   const argLinks = [];
   for (let node of [...data.nodes, ...extraNodes]) {
-    let rand = Math.floor((Math.random() * 100000000)).toString();
+    let rand = Math.floor(Math.random() * 100000000).toString();
     let nodeId = node.id;
     let newId = nodeId + rand;
     oldNodeToNewNodeId[nodeId] = newId;
