@@ -3,7 +3,6 @@ import { Graph as D3Graph } from "react-d3-graph";
 import { getTypeConfig } from "../parser/inputTypes";
 import * as Utils from "../utils/utils";
 import { performLayout } from "../layout/layoutTypes";
-import { LinkSharp } from "@material-ui/icons";
 
 export const DEFAULT_GRAPH_WIDTH = 700;
 export const DEFAULT_GRAPH_HEIGHT = 350;
@@ -160,7 +159,7 @@ const Graph = ({
   const argNodes = [];
   const argLinks = [];
   for (let node of [...data.nodes, ...extraNodes]) {
-    let rand = (Math.random() * 100000000).toString();
+    let rand = Math.floor((Math.random() * 100000000)).toString();
     let nodeId = node.id;
     let newId = nodeId + rand;
     oldNodeToNewNodeId[nodeId] = newId;

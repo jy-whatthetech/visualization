@@ -90,6 +90,11 @@ function App() {
       parsedValue = ParseUtils.processInput(inputValue, comboValue, {
         oneIndexed
       });
+
+      if (parsedValue.nodeSet.size === 0) {
+        setGraphInputError("There are no valid nodes in the input.");
+        return;
+      }
     } catch (ex) {
       setGraphInputError(ex.message);
       return;

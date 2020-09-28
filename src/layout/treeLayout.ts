@@ -90,6 +90,14 @@ function runBuchheim(root: TreeNode, padding: number, isBinary: boolean, depth: 
       moveSubtree(child, minShift);
       [leftContour, rightContour] = getContours(child);
     }
+    for (let i = 0; i < prevRightContour.length; i++) {
+      const val = prevRightContour[i];
+      if (i >= rightContour.length) {
+        rightContour.push(val);
+      } else {
+        rightContour[i] = Math.max(rightContour[i], val);
+      }
+    }
     prevRightContour = rightContour;
   }
 
