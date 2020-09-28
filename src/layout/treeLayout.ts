@@ -26,9 +26,9 @@ export function layoutTree(data: MyDataType, inputType: number) {
 
   const edgeMap = LayoutUtils.convertToEdgeMap(links, !!directed);
   let idToNode: IdToNode = {};
-  // run Buchheim algorithm on all disconnected components
+  // run Buchheim algorithm on all disconnected components, then lay them out next to each other
   let rightMostX = 0;
-  const disconnectedComponents = LayoutUtils.getDisconnectedComponents(nodes, links);
+  const disconnectedComponents = LayoutUtils.getDisconnectedComponents(nodes, links, startNode);
 
   for (let comp of disconnectedComponents) {
     // derive the start node based on if user specified it
@@ -95,7 +95,7 @@ function runBuchheim(root: TreeNode, padding: number, isBinary: boolean, depth: 
       }
     }
 
-    let [leftContour, rightContour] = getContours(root);
+    let rightContour = getContours(root)[1];
     let rightMostX = root.x;
     for (let r of rightContour) {
       rightMostX = Math.max(rightMostX, r);

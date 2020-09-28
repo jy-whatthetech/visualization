@@ -9,6 +9,9 @@ export function processInput(input: string, type: number, options?: any): any {
     if (options.oneIndexed) {
       config.oneIndexed = true;
     }
+    if (options.reverseEdges) {
+      config.reverseEdges = true;
+    }
   }
 
   switch (type) {
@@ -43,9 +46,13 @@ function cleanseInput(s: string) {
 
 // directed pairs
 // [[2,1],[3,1],[1,4]]
-export function parsePairs(config: { input: string; directed?: boolean; weighted?: boolean }): any {
-  let { input, weighted = false } = config;
-
+export function parsePairs(config: {
+  input: string;
+  directed?: boolean;
+  weighted?: boolean;
+  reverseEdges?: boolean;
+}): any {
+  let { input, weighted = false, reverseEdges = false } = config;
   // trim whitespace
   input = input.trim();
   if (input.length < 2) throw new Error("Please enter a non-empty input.");
@@ -64,7 +71,8 @@ export function parsePairs(config: { input: string; directed?: boolean; weighted
       const pair = getDirectedPair(
         input.slice(nextOpenBracket + 1, nextCloseBracket),
         nodeSet,
-        weighted
+        weighted,
+        reverseEdges
       );
       links.push(pair);
     } catch (ex) {
@@ -79,7 +87,12 @@ export function parsePairs(config: { input: string; directed?: boolean; weighted
 
   return { nodeSet: nodeSet, links: links };
 }
-function getDirectedPair(s: string, nodeSet: Set<string>, weighted: boolean) {
+function getDirectedPair(
+  s: string,
+  nodeSet: Set<string>,
+  weighted: boolean,
+  reverseEdges: boolean
+) {
   s = s.trim();
   if (s.length === 0 || s.indexOf(",") === -1)
     throw new Error("An edge pair had less than two arguments.");
@@ -93,7 +106,10 @@ function getDirectedPair(s: string, nodeSet: Set<string>, weighted: boolean) {
   nodeSet.add(src);
   nodeSet.add(trg);
 
-  const rtn: any = { source: src, target: trg };
+  let rtn: any = { source: src, target: trg };
+  if (reverseEdges) {
+    rtn = { source: trg, target: src };
+  }
   if (weighted && sp.length === 3) {
     rtn.label = sp[2].trim();
   }
@@ -223,10 +239,10 @@ export function parseGraphJSON(config: { input: string }) {
   } catch (error) {
     throw new Error(error.message);
   }
-  if (!jsonObj.graph || !jsonObj.graph.nodes) {
-    throw new Error("JSON object is missing the `graph.nodes` property");
+  if (!jsonObj.nodes) {
+    throw new Error("JSON object is missing the `nodes` property");
   }
-  let nodes = jsonObj.graph.nodes;
+  let nodes = jsonObj.nodes;
 
   const nodeSet = new Set<string>();
   const links = [];
@@ -241,7 +257,7 @@ export function parseGraphJSON(config: { input: string }) {
     }
   }
 
-  return { startNode: jsonObj.graph.startNode, nodeSet: nodeSet, links: links };
+  return { startNode: jsonObj.startNode, nodeSet: nodeSet, links: links };
 }
 
 export function parseBinaryTreeJSON(config: { input: string }) {
@@ -254,10 +270,10 @@ export function parseBinaryTreeJSON(config: { input: string }) {
     throw new Error(error.message);
   }
 
-  if (!jsonObj.tree || !jsonObj.tree.nodes) {
-    throw new Error("JSON object is missing the `tree.nodes` property");
+  if (!jsonObj.nodes) {
+    throw new Error("JSON object is missing the `nodes` property");
   }
-  let nodes = jsonObj.tree.nodes;
+  let nodes = jsonObj.nodes;
 
   const nodeSet = new Set<string>();
   const links = [];
@@ -291,8 +307,8 @@ export function parseBinaryTreeJSON(config: { input: string }) {
   }
 
   return {
-    startNode: jsonObj.tree.root,
-    tree: idToNode[jsonObj.tree.root],
+    startNode: jsonObj.root,
+    tree: idToNode[jsonObj.root],
     idToTreeNode: idToNode,
     nodeSet: nodeSet,
     links: links

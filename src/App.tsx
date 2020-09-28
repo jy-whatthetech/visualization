@@ -23,11 +23,7 @@ import {
 import { Autocomplete } from "@material-ui/lab";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { useStyles } from "./styles/useStyles";
-import {
-  Menu as MenuIcon,
-  ChevronLeft as ChevronLeftIcon,
-  RotateLeft as RotateLeftIcon
-} from "@material-ui/icons";
+import { Menu as MenuIcon, ChevronLeft as ChevronLeftIcon } from "@material-ui/icons";
 import { LabelWithTooltip, ColorButton, SelectedButton } from "./utils/helperComponents";
 import { TreeNode } from "./layout/treeLayout";
 
@@ -55,7 +51,8 @@ function App() {
   const [inputValue, setInputValue] = React.useState(DEFAULT_GRAPH_INPUT);
   const [comboValue, setComboValue] = React.useState(InputType.LeetcodeTree);
   const [directed, setDirected] = React.useState(true);
-  const [oneIndexed, setOneIndexed] = React.useState(false);
+  const [oneIndexed, setOneIndexed] = React.useState(false); // used for adjacency lists
+  const [reverseEdges, setReverseEdges] = React.useState(false); // used for edge pairs
   const [customNodes, setCustomNodes] = React.useState(DEFAULT_CUSTOM_NODES_INPUT);
 
   const [allNodes, setAllNodes] = React.useState<Array<string>>([]);
@@ -88,7 +85,8 @@ function App() {
     let parsedValue: any;
     try {
       parsedValue = ParseUtils.processInput(inputValue, comboValue, {
-        oneIndexed
+        oneIndexed,
+        reverseEdges
       });
 
       if (parsedValue.nodeSet.size === 0) {
@@ -115,7 +113,7 @@ function App() {
     }
     setGraphInputError("");
     setData(parsedValue);
-  }, [inputValue, comboValue, oneIndexed]);
+  }, [inputValue, comboValue, oneIndexed, reverseEdges]);
 
   // handle changes to custom nodes input ()
   React.useEffect(() => {
@@ -197,17 +195,6 @@ function App() {
                 </ColorButton>
               );
             })}
-          <div className={classes.rotateButton}>
-            <IconButton
-              color="inherit"
-              onClick={() => {
-                // TODO: rotate layout
-              }}
-              edge="start"
-            >
-              <RotateLeftIcon />
-            </IconButton>
-          </div>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -291,6 +278,20 @@ function App() {
                 />
               }
               label="1-indexed"
+            />
+          )}
+          {comboValue === InputType.EdgePairs && (
+            <FormControlLabel
+              className={classes.formControlLabel}
+              control={
+                <Checkbox
+                  checked={reverseEdges}
+                  onChange={e => setReverseEdges(!reverseEdges)}
+                  name="reverseValue"
+                  color="primary"
+                />
+              }
+              label="Reverse"
             />
           )}
           <FormControlLabel

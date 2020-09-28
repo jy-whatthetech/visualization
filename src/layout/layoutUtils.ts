@@ -106,9 +106,11 @@ export function getExtraNodes(
 
 // get all disconeccted components
 // return list of list of nodes
+// Note: the connected component with the start node should always be first in the returned list
 export function getDisconnectedComponents(
   nodes: Array<MyGraphNodeType>,
-  links: Array<MyGraphLinkType>
+  links: Array<MyGraphLinkType>,
+  startNode: string | undefined
 ) {
   const idToNodes: { [key: string]: MyGraphNodeType } = {};
   for (let node of nodes) {
@@ -133,7 +135,12 @@ export function getDisconnectedComponents(
       for (let c of Array.from(collected)) {
         toAdd.push(idToNodes[c]);
       }
-      rtn.push(toAdd);
+
+      if (startNode && collected.has(startNode)) {
+        rtn.unshift(toAdd);
+      } else {
+        rtn.push(toAdd);
+      }
     }
   }
 
