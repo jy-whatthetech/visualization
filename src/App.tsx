@@ -26,7 +26,7 @@ import { useStyles } from "./styles/useStyles";
 import {
   Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
-  RotateRight as RotateRightIcon
+  RotateLeft as RotateLeftIcon
 } from "@material-ui/icons";
 import { LabelWithTooltip, ColorButton, SelectedButton } from "./utils/helperComponents";
 import { TreeNode } from "./layout/treeLayout";
@@ -162,7 +162,7 @@ function App() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Choose Layout:
+            Choose Layout Type:
           </Typography>
           {Object.keys(LayoutType)
             .filter(k => typeof LayoutType[k as any] !== "number")
@@ -170,6 +170,7 @@ function App() {
               let currLayoutType = parseInt(key);
               return currLayoutType === selectedLayout ? (
                 <SelectedButton
+                  key={key}
                   className={classes.layoutButton}
                   variant="contained"
                   onClick={() => {
@@ -180,6 +181,7 @@ function App() {
                 </SelectedButton>
               ) : (
                 <ColorButton
+                  key={key}
                   className={classes.layoutButton}
                   variant="contained"
                   onClick={() => {
@@ -198,7 +200,7 @@ function App() {
               }}
               edge="start"
             >
-              <RotateRightIcon />
+              <RotateLeftIcon />
             </IconButton>
           </div>
         </Toolbar>
@@ -352,6 +354,7 @@ function App() {
           startNode={startNode}
           data={data}
           selectedLayout={selectedLayout}
+          drawerOpen={drawerOpen}
         />
       </main>
     </div>

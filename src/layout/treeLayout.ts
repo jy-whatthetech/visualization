@@ -37,8 +37,6 @@ export function layoutTree(data: MyDataType, inputType: number) {
 
   // run Buchheim algorithm!
   let result = runBuchheim(root as TreeNode, DEFAULT_PADDING, isBinary, 0);
-  console.log("--- RAN BUCHHEIM LAYOUT. RESULT IS: ---");
-  console.log(result);
 
   // assign positions to actual nodes
   for (let node of nodes) {
@@ -46,12 +44,13 @@ export function layoutTree(data: MyDataType, inputType: number) {
     // TODO: handle rotation (normalization needs to handle rotation)
     const nodeId = node.id;
     const tNode = idToNode[nodeId];
-    let realx = Graph.DEFAULT_LEFT_PADDING + 100 * tNode.x;
-    let realy = Graph.DEFAULT_TOP_PADDING + 100 * tNode.y;
-    node.x = realx;
-    node.y = realy;
+    if (tNode) {
+      let realx = Graph.DEFAULT_LEFT_PADDING + 100 * tNode.x;
+      let realy = Graph.DEFAULT_TOP_PADDING + 100 * tNode.y;
+      node.x = realx;
+      node.y = realy;
+    }
   }
-  console.log(nodes);
 }
 
 function runBuchheim(root: TreeNode, padding: number, isBinary: boolean, depth: number) {
