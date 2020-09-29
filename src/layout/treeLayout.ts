@@ -4,6 +4,7 @@ import * as Graph from "../graph/Graph";
 import { InputType } from "../parser/inputTypes";
 
 const DEFAULT_PADDING = 0.3;
+const DEFAULT_SPACE_BETWEEN_COMPONENTS = 0.7;
 
 type IdToNode = {
   [key: string]: TreeNode;
@@ -51,7 +52,7 @@ export function layoutTree(data: MyDataType, inputType: number) {
       root = constructTreeObject(edgeMap, actualStartNode, idToNode);
     }
 
-    let shiftAmount = rightMostX > 0 ? rightMostX + DEFAULT_PADDING : 0;
+    let shiftAmount = rightMostX > 0 ? rightMostX + DEFAULT_SPACE_BETWEEN_COMPONENTS : 0;
     rightMostX = runBuchheim(root, DEFAULT_PADDING, isBinary, 0);
     moveSubtree(root, shiftAmount);
   }

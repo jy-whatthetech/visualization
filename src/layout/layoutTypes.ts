@@ -42,6 +42,9 @@ export function performLayout(layoutType: number, data: MyDataType, inputType: n
   switch (layoutType) {
     case LayoutType.Tree:
       return layoutTree(data, inputType);
+    case LayoutType.ForceLayout:
+      // Handled within Graph.tsx
+      return;
     default:
       console.error("unhandled layout type");
       return;

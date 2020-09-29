@@ -3,7 +3,7 @@ import { Graph as D3Graph } from "react-d3-graph";
 import { getTypeConfig } from "../parser/inputTypes";
 import * as Utils from "../utils/utils";
 import * as LayoutUtils from "../layout/layoutUtils";
-import { performLayout } from "../layout/layoutTypes";
+import { performLayout, LayoutType } from "../layout/layoutTypes";
 
 export const DEFAULT_LEFT_PADDING = 100;
 export const DEFAULT_RIGHT_PADDING = 100;
@@ -80,7 +80,7 @@ const Graph = ({
       }
     }
     setOldToNewId(currIdMap);
-  }, [data.nodes, customNodes]);
+  }, [data, customNodes, selectedLayout]);
 
   const graphPaneHeight = dimensions.height - 120;
   const graphPaneWidth = drawerOpen ? dimensions.width - 350 : dimensions.width - 50;
@@ -122,7 +122,7 @@ const Graph = ({
 
   const myConfig = {
     nodeHighlightBehavior: true,
-    staticGraphWithDragAndDrop: true,
+    staticGraphWithDragAndDrop: selectedLayout !== LayoutType.ForceLayout,
     width: graphPaneWidth,
     height: graphPaneHeight,
     directed: directed,
@@ -139,61 +139,18 @@ const Graph = ({
     focusZoom: 1
   };
 
-  // graph event callbacks
-  // const onClickGraph = function() {
-  //   window.alert(`Clicked the graph background`);
-  // };
-
-  // const onClickNode = function(nodeId: string) {
-  //   window.alert(`Clicked node ${nodeId}`);
-  // };
-
-  // const onDoubleClickNode = function(nodeId: string) {
-  //   window.alert(`Double clicked node ${nodeId}`);
-  // };
-
-  // const onRightClickNode = function(event: any, nodeId: string) {
-  //   window.alert(`Right clicked node ${nodeId}`);
-  // };
-
-  // const onMouseOverNode = function(nodeId: string) {
-  //   window.alert(`Mouse over node ${nodeId}`);
-  // };
-
-  // const onMouseOutNode = function(nodeId: string) {
-  //   window.alert(`Mouse out node ${nodeId}`);
-  // };
-
-  // const onClickLink = function(source: string, target: string) {
-  //   window.alert(`Clicked link between ${source} and ${target}`);
-  // };
-
-  // const onRightClickLink = function(
-  //   event: any,
-  //   source: string,
-  //   target: string
-  // ) {
-  //   window.alert(`Right clicked link between ${source} and ${target}`);
-  // };
-
-  // const onMouseOverLink = function(source: string, target: string) {
-  //   window.alert(`Mouse over in link between ${source} and ${target}`);
-  // };
-
-  // const onMouseOutLink = function(source: string, target: string) {
-  //   window.alert(`Mouse out link between ${source} and ${target}`);
-  // };
-
-  const onNodePositionChange = function(nodeId: string, x: number, y: number) {
-    window.alert(`Node ${nodeId} is moved to new position. New position is x= ${x} y= ${y}`);
-  };
-
   const argNodes = [];
   const argLinks = [];
   let focusId: string | undefined;
+  const seen = new Set<string>();
+
   for (let node of [...data.nodes, ...extraNodes]) {
     let nodeId = node.id;
-    if (node.label === searchText) {
+    if (seen.has(nodeId)) {
+      continue;
+    }
+    seen.add(nodeId);
+    if (node.label.toLowerCase() === searchText.trim().toLowerCase()) {
       focusId = nodeId;
       argNodes.push({
         ...node,
@@ -223,17 +180,6 @@ const Graph = ({
         focusedNodeId: focusId ? oldToNewId[focusId] : undefined
       }}
       config={myConfig}
-      // onClickNode={onClickNode}
-      // onDoubleClickNode={onDoubleClickNode}
-      // onRightClickNode={onRightClickNode}
-      // onClickGraph={onClickGraph}
-      // onClickLink={onClickLink}
-      // onRightClickLink={onRightClickLink}
-      // onMouseOverNode={onMouseOverNode}
-      // onMouseOutNode={onMouseOutNode}
-      // onMouseOverLink={onMouseOverLink}
-      // onMouseOutLink={onMouseOutLink}
-      onNodePositionChange={onNodePositionChange}
     />
   );
 };
