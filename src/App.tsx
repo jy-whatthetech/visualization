@@ -26,6 +26,7 @@ import { useStyles } from "./styles/useStyles";
 import { Menu as MenuIcon, ChevronLeft as ChevronLeftIcon } from "@material-ui/icons";
 import { LabelWithTooltip, ColorButton, SelectedButton } from "./utils/helperComponents";
 import { TreeNode } from "./layout/treeLayout";
+import SearchBar from "material-ui-search-bar";
 
 const DEFAULT_GRAPH_INPUT = "[5,4,7,3,null,2,null,-1,null,9]";
 const DEFAULT_CUSTOM_NODES_INPUT = "";
@@ -74,6 +75,8 @@ function App() {
 
   // layout
   const [selectedLayout, setSelectedLayout] = React.useState(LayoutType.Tree);
+  const [searchInputValue, setSearchInputValue] = React.useState("");
+  const [searchText, setSearchText] = React.useState("");
 
   const graphInputRef = React.useRef<any>();
   const customNodesInputRef = React.useRef<any>();
@@ -195,6 +198,19 @@ function App() {
                 </ColorButton>
               );
             })}
+          <div className={classes.searchBar}>
+            <SearchBar
+              value={searchInputValue}
+              onChange={newValue => setSearchInputValue(newValue)}
+              onRequestSearch={() => setSearchText(searchInputValue)}
+              onCancelSearch={() => setSearchText("")}
+              placeholder={"Search Nodes"}
+              style={{
+                width: 240,
+                height: 36
+              }}
+            />
+          </div>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -361,6 +377,7 @@ function App() {
           data={data}
           selectedLayout={selectedLayout}
           drawerOpen={drawerOpen}
+          searchText={searchText}
         />
       </main>
     </div>

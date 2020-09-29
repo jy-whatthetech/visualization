@@ -66,6 +66,11 @@ export const useStyles = makeStyles(theme => ({
     marginLeft: 10,
     marginRight: 0
   },
+  searchBar: {
+    display: "flex",
+    flex: 1,
+    justifyContent: "flex-end"
+  },
 
   // form styles
   formControl: {

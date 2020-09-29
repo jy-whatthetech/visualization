@@ -100,6 +100,7 @@ function runBuchheim(root: TreeNode, padding: number, isBinary: boolean, depth: 
     for (let r of rightContour) {
       rightMostX = Math.max(rightMostX, r);
     }
+    return rightMostX;
   }
 
   let prevRightContour: Array<number> = [];
