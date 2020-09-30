@@ -90,5 +90,8 @@ export const useStyles = makeStyles(theme => ({
     top: 75,
     right: 30,
     height: 150
+  },
+  layoutError: {
+    marginRight: 150
   }
 }));

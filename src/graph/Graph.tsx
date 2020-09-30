@@ -5,6 +5,7 @@ import * as Utils from "../utils/utils";
 import * as LayoutUtils from "../layout/layoutUtils";
 import { performLayout, LayoutType } from "../layout/layoutTypes";
 import { Typography } from "@material-ui/core";
+import { useStyles } from "../styles/useStyles";
 
 export const DEFAULT_LEFT_PADDING = 100;
 export const DEFAULT_RIGHT_PADDING = 100;
@@ -49,6 +50,8 @@ const Graph = ({
   horizontalSpacing,
   verticalSpacing
 }: GraphProps) => {
+  const classes = useStyles();
+
   const [dimensions, setDimensions] = React.useState({
     height: window.innerHeight,
     width: window.innerWidth
@@ -135,9 +138,11 @@ const Graph = ({
   });
   if (typeof layoutResult === "string") {
     return (
-      <Typography color="secondary" variant="h6">
-        {layoutResult}
-      </Typography>
+      <div className={classes.layoutError}>
+        <Typography color="secondary" variant="h6">
+          {layoutResult}
+        </Typography>
+      </div>
     );
   }
 
