@@ -2,15 +2,16 @@ import * as LayoutUtils from "./layoutUtils";
 import { MyDataType, MyGraphNodeType, MyGraphLinkType } from "../App";
 import * as Graph from "../graph/Graph";
 
-const DEFAULT_X_SPACING = 120;
-const DEFAULT_Y_SPACING = 70;
 const DEFAULT_SPACE_BETWEEN_COMPONENTS = 80;
+
+const xSpacingArray = [50, 75, 100, 125, 150];
+const ySpacingArray = [40, 55, 75, 110, 140];
 
 type IdToNode = {
   [key: string]: MyGraphNodeType;
 };
 
-export function layoutTopoSort(data: MyDataType) {
+export function layoutTopoSort(data: MyDataType, spacing: { x: number; y: number }) {
   let { startNode, nodes, links } = data;
 
   let idToNode: IdToNode = {};
@@ -67,7 +68,7 @@ export function layoutTopoSort(data: MyDataType) {
               let childLevel = nodeToLevel[childId];
               if (level === childLevel) {
                 level += 1;
-                y_value += DEFAULT_Y_SPACING;
+                y_value += ySpacingArray[spacing.y];
               }
               continue;
             } else if (nextSeen.has(childId)) {
@@ -80,7 +81,7 @@ export function layoutTopoSort(data: MyDataType) {
 
         nodeToLevel[node.id] = level;
         node.y = y_value;
-        y_value += DEFAULT_Y_SPACING;
+        y_value += ySpacingArray[spacing.y];
         level += 1;
       }
       for (let nid of Array.from(nextSeen)) {
@@ -90,14 +91,14 @@ export function layoutTopoSort(data: MyDataType) {
       curr = next;
       currMaxY = Math.max(currMaxY, y_value);
       y_value = baselineY;
-      x_value += DEFAULT_X_SPACING;
+      x_value += xSpacingArray[spacing.x];
     }
 
     // if there are nodes in this component not in seen, there was a cycle; return error
     for (let node of comp) {
-        if (!seen.has(node.id)) {
-            return "Invalid Graph: cycle detected in graph. Topological Sort can only be performed on graphs without cycles.";
-        }
+      if (!seen.has(node.id)) {
+        return "Invalid Graph: cycle detected in graph. Topological Sort can only be performed on graphs without cycles.";
+      }
     }
 
     prevMaxY = currMaxY;
@@ -127,7 +128,7 @@ function findNodesWithZeroIndegree(
 }
 
 // returns a map of node ids to their indegree
-function getNodeToIndegree(
+export function getNodeToIndegree(
   nodes: Array<MyGraphNodeType>,
   links: Array<MyGraphLinkType>
 ): { [key: string]: number } {

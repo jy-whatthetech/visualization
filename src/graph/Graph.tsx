@@ -21,6 +21,8 @@ export type GraphProps = {
   selectedLayout: number;
   drawerOpen: boolean;
   searchText: string;
+  horizontalSpacing: number;
+  verticalSpacing: number;
 };
 
 function debounce(fn: any, ms: number) {
@@ -43,7 +45,9 @@ const Graph = ({
   startNode,
   selectedLayout,
   drawerOpen,
-  searchText
+  searchText,
+  horizontalSpacing,
+  verticalSpacing
 }: GraphProps) => {
   const [dimensions, setDimensions] = React.useState({
     height: window.innerHeight,
@@ -81,7 +85,7 @@ const Graph = ({
       }
     }
     setOldToNewId(currIdMap);
-  }, [data, customNodes, selectedLayout, startNode]);
+  }, [data, customNodes, selectedLayout, startNode, horizontalSpacing, verticalSpacing]);
 
   const graphPaneHeight = dimensions.height - 120;
   const graphPaneWidth = drawerOpen ? dimensions.width - 350 : dimensions.width - 50;
@@ -125,7 +129,10 @@ const Graph = ({
   // run layout on all connectd components
   data.startNode = startNode;
   data.directed = directed;
-  const layoutResult = performLayout(selectedLayout, data, inputType);
+  const layoutResult = performLayout(selectedLayout, data, inputType, {
+    x: horizontalSpacing,
+    y: verticalSpacing
+  });
   if (typeof layoutResult === "string") {
     return (
       <Typography color="secondary" variant="h6">

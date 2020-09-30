@@ -47,14 +47,19 @@ export function getDefaultLayout({ inputType, data, directed, customNodes, start
   }
 }
 
-export function performLayout(layoutType: number, data: MyDataType, inputType: number) {
+export function performLayout(
+  layoutType: number,
+  data: MyDataType,
+  inputType: number,
+  spacing: { x: number; y: number }
+) {
   switch (layoutType) {
     case LayoutType.Tree:
-      return layoutTree(data, inputType);
+      return layoutTree(data, inputType, spacing);
     case LayoutType.TopologicalSort:
-      return layoutTopoSort(data);
+      return layoutTopoSort(data, spacing);
     case LayoutType.Arc:
-      return layoutArc(data);
+      return layoutArc(data, spacing);
     case LayoutType.ForceLayout:
       // Handled within Graph.tsx
       return;

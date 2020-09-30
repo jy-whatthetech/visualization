@@ -3,8 +3,10 @@ import * as LayoutUtils from "./layoutUtils";
 import * as Graph from "../graph/Graph";
 import { InputType } from "../parser/inputTypes";
 
-const DEFAULT_PADDING = 0.3;
-const DEFAULT_SPACE_BETWEEN_COMPONENTS = 0.7;
+const DEFAULT_PADDING = 0.4;
+const DEFAULT_SPACE_BETWEEN_COMPONENTS = 0.8;
+
+const spacingArray = [50, 75, 90, 125, 160];
 
 type IdToNode = {
   [key: string]: TreeNode;
@@ -18,7 +20,7 @@ function isBinaryTree(inputType: number): boolean {
   );
 }
 
-export function layoutTree(data: MyDataType, inputType: number) {
+export function layoutTree(data: MyDataType, inputType: number, spacing: { x: number; y: number }) {
   let { startNode, nodes, links, directed, tree, idToTreeNode } = data;
   let isBinary = isBinaryTree(inputType);
   if (!isBinary) {
@@ -63,8 +65,8 @@ export function layoutTree(data: MyDataType, inputType: number) {
     const nodeId = node.id;
     const tNode = idToNode[nodeId];
     if (tNode) {
-      let realx = Graph.DEFAULT_LEFT_PADDING + 100 * tNode.x;
-      let realy = Graph.DEFAULT_TOP_PADDING + 100 * tNode.y;
+      let realx = Graph.DEFAULT_LEFT_PADDING + spacingArray[spacing.x] * tNode.x;
+      let realy = Graph.DEFAULT_TOP_PADDING + spacingArray[spacing.y] * tNode.y;
       node.x = realx;
       node.y = realy;
     }

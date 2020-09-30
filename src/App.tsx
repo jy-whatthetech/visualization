@@ -18,7 +18,8 @@ import {
   Typography,
   TextField,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Slider
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -103,6 +104,9 @@ function App() {
   const graphInputRef = React.useRef<any>();
   const customNodesInputRef = React.useRef<any>();
   const reverseRef = React.useRef(false);
+
+  const [verticalSlider, setVerticalSlider] = React.useState<number>(2);
+  const [horizontalSlider, setHorizontalSlider] = React.useState<number>(2);
 
   // handle changes to graph input, input type, associated options (i.e. 1-indexed)
   React.useEffect(() => {
@@ -409,7 +413,49 @@ function App() {
           selectedLayout={selectedLayout}
           drawerOpen={drawerOpen}
           searchText={searchText}
+          horizontalSpacing={horizontalSlider}
+          verticalSpacing={verticalSlider}
         />
+        <div className={classes.sliders}>
+          {selectedLayout !== LayoutType.ForceLayout && selectedLayout !== LayoutType.Random && (
+            <>
+              <Typography id="continuous-slider" gutterBottom>
+                Horizontal Spacing
+              </Typography>
+              <Slider
+                value={horizontalSlider}
+                onChange={(event, newValue) => {
+                  setHorizontalSlider(newValue as number);
+                }}
+                aria-labelledby="discrete-slider"
+                step={1}
+                marks
+                min={0}
+                max={4}
+              />
+            </>
+          )}
+          {selectedLayout !== LayoutType.ForceLayout &&
+            selectedLayout !== LayoutType.Random &&
+            selectedLayout !== LayoutType.Arc && (
+              <>
+                <Typography id="continuous-slider" gutterBottom>
+                  Vertical Spacing
+                </Typography>
+                <Slider
+                  value={verticalSlider}
+                  onChange={(event, newValue) => {
+                    setVerticalSlider(newValue as number);
+                  }}
+                  aria-labelledby="discrete-slider"
+                  step={1}
+                  marks
+                  min={0}
+                  max={4}
+                />
+              </>
+            )}
+        </div>
       </main>
     </div>
   );

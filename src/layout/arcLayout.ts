@@ -3,12 +3,13 @@ import { MyDataType, MyGraphNodeType } from "../App";
 import * as Graph from "../graph/Graph";
 import { generatePermutations } from "../utils/utils";
 
-const DEFAULT_X_SPACING = 70;
 const DEFAULT_Y_PADDING = 120;
+
+const spacingArray = [60, 75, 90, 125, 150];
 
 const DEFAULT_MAX_LEN_TO_BRUTE_FORCE = 5;
 
-export function layoutArc(data: MyDataType) {
+export function layoutArc(data: MyDataType, spacing: { x: number; y: number }) {
   let { startNode, nodes, links } = data;
 
   const disconnectedComponents = LayoutUtils.getDisconnectedComponents(nodes, links, startNode);
@@ -48,7 +49,7 @@ export function layoutArc(data: MyDataType) {
     for (let node of sortedNodes) {
       node.x = x_offset;
       node.y = y_value;
-      x_offset += DEFAULT_X_SPACING;
+      x_offset += spacingArray[spacing.x];
     }
     y_value += DEFAULT_Y_PADDING * 2;
   }
