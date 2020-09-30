@@ -172,7 +172,7 @@ function parseArray(s: string): any[] {
 
   const sp = s.split(",");
   for (let elem of sp) {
-    const toAdd = elem.trim();
+    const toAdd = cleanseInput(elem);
     if (toAdd.length > 0) {
       rtn.push(toAdd);
     }

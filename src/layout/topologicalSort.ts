@@ -39,7 +39,7 @@ export function layoutTopoSort(data: MyDataType, spacing: { x: number; y: number
     let curr = roots;
     let baselineY = prevMaxY
       ? prevMaxY + DEFAULT_SPACE_BETWEEN_COMPONENTS
-      : Graph.DEFAULT_TOP_PADDING;
+      : Graph.DEFAULT_TOP_PADDING * 1.2;
     let currMaxY = prevMaxY;
     let y_value = baselineY;
     let x_value = Graph.DEFAULT_LEFT_PADDING;

@@ -30,29 +30,9 @@ import { TreeNode } from "./layout/treeLayout";
 import SearchBar from "material-ui-search-bar";
 
 const DEFAULT_INPUT_TYPE = InputType.EdgePairs;
-const DEFAULT_LAYOUT_TYPE = LayoutType.Arc;
-const DEFAULT_GRAPH_INPUT = `[
-  ['DSM', 'ORD'],
-  ['ORD', 'BGI'],
-  ['BGI', 'LGA'],
-  ['SIN', 'CDG'],
-  ['CDG', 'SIN'],
-  ['CDG', 'BUD'],
-  ['DEL', 'DOH'],
-  ['DEL', 'CDG'],
-  ['TLV', 'DEL'],
-  ['EWR', 'HND'],
-  ['HND', 'ICN'],
-  ['HND', 'JFK'],
-  ['ICN', 'JFK'],
-  ['JFK', 'LGA'],
-  ['EYW', 'LHR'],
-  ['LHR', 'SFO'],
-  ['SFO', 'SAN'],
-  ['SFO', 'DSM'],
-  ['SAN', 'EYW']
-]`;
-const DEFAULT_CUSTOM_NODES_INPUT = "";
+const DEFAULT_LAYOUT_TYPE = LayoutType.Tree;
+const DEFAULT_GRAPH_INPUT = ``;
+const DEFAULT_CUSTOM_NODES_INPUT = "[]";
 
 export type MyGraphNodeType = { id: string; label: string; x?: number; y?: number };
 export type MyGraphLinkType = { source: string; target: string; label?: string };
@@ -89,11 +69,8 @@ function App() {
   // graph payload (with minimalist structure)
   const [customNodeSet, setCustomNodeSet] = React.useState(new Set<string>());
   const [data, setData] = React.useState<MyDataType>({
-    nodes: [
-      { id: "PlaceHolderNode1", label: "PlaceHolderNode1", x: 50, y: 50 },
-      { id: "PlaceHolderNode2", label: "PlaceHolderNode2", x: 100, y: 100 }
-    ],
-    links: [{ source: "PlaceHolderNode1", target: "PlaceHolderNode2", label: "TestLinkLabel" }]
+    nodes: [],
+    links: []
   });
 
   // layout
@@ -374,7 +351,7 @@ function App() {
               InputLabelProps={{ style: { pointerEvents: "auto" } }}
               label={
                 <LabelWithTooltip
-                  label={"Custom Node Set"}
+                  label={"Custom Node List"}
                   tooltipText={
                     "(Optional) Specify if the set of nodes is described in a separate list from the edges."
                   }

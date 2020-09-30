@@ -5,7 +5,7 @@ import { generatePermutations } from "../utils/utils";
 
 const DEFAULT_Y_PADDING = 120;
 
-const spacingArray = [60, 75, 90, 125, 150];
+const spacingArray = [50, 60, 75, 95, 125];
 
 const DEFAULT_MAX_LEN_TO_BRUTE_FORCE = 5;
 
@@ -45,7 +45,7 @@ export function layoutArc(data: MyDataType, spacing: { x: number; y: number }) {
     }
 
     // assign positions to the sorted notes
-    let x_offset = Graph.DEFAULT_LEFT_PADDING;
+    let x_offset = Graph.DEFAULT_LEFT_PADDING / 2;
     for (let node of sortedNodes) {
       node.x = x_offset;
       node.y = y_value;

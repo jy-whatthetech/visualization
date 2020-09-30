@@ -12,9 +12,9 @@ export enum InputType {
 export function getLabel(type: number) {
   switch (type) {
     case InputType.EdgePairs:
-      return "Edge Pairs";
+      return "Edge List";
     case InputType.WeightedEdgePairs:
-      return "Edge Pairs w/ Weights";
+      return "Weighted Edge List";
     case InputType.AdjacencyList:
       return "Adjacency List";
     case InputType.AdjacencyMatrix:

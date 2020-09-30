@@ -8,7 +8,7 @@ import { Typography } from "@material-ui/core";
 import { useStyles } from "../styles/useStyles";
 
 export const DEFAULT_LEFT_PADDING = 100;
-export const DEFAULT_RIGHT_PADDING = 100;
+export const DEFAULT_RIGHT_PADDING = 180;
 export const DEFAULT_TOP_PADDING = 50;
 export const DEFAULT_EXTRA_NODE_SPACING = 50;
 
@@ -90,19 +90,23 @@ const Graph = ({
     setOldToNewId(currIdMap);
   }, [data, customNodes, selectedLayout, startNode, horizontalSpacing, verticalSpacing]);
 
+  if (data.nodes.length === 0) {
+    return (
+      <div className={classes.layoutError}>
+        <Typography color="secondary" variant="h6">
+          {"<-- Enter a graph input."}
+        </Typography>
+      </div>
+    );
+  }
+
   const graphPaneHeight = dimensions.height - 120;
   const graphPaneWidth = drawerOpen ? dimensions.width - 350 : dimensions.width - 50;
 
   // generate random positions by default (for testing purposes only)
   for (let n of data.nodes) {
-    n.x = Utils.randomInRange(
-      DEFAULT_LEFT_PADDING * 1.5,
-      graphPaneWidth - DEFAULT_LEFT_PADDING * 1.5
-    );
-    n.y = Utils.randomInRange(
-      DEFAULT_TOP_PADDING * 1.5,
-      graphPaneHeight - DEFAULT_TOP_PADDING * 1.5
-    );
+    n.x = Utils.randomInRange(DEFAULT_LEFT_PADDING, graphPaneWidth - DEFAULT_LEFT_PADDING * 1.6);
+    n.y = Utils.randomInRange(DEFAULT_TOP_PADDING, graphPaneHeight - DEFAULT_TOP_PADDING * 1.8);
   }
 
   // add nodes from customNodes that don't already exist
@@ -139,7 +143,7 @@ const Graph = ({
   if (typeof layoutResult === "string") {
     return (
       <div className={classes.layoutError}>
-        <Typography color="secondary" variant="h6">
+        <Typography color="error" variant="h6">
           {layoutResult}
         </Typography>
       </div>
@@ -162,6 +166,13 @@ const Graph = ({
       color: "blue",
       renderLabel: getTypeConfig(inputType).weighted,
       type: selectedLayout === LayoutType.Arc ? "CURVE_SMOOTH" : "STRAIGHT"
+    },
+    d3: {
+      alphaTarget: 0.05,
+      gravity: -180,
+      linkLength: 120,
+      linkStrength: 0.5,
+      disableLinkForce: false
     },
     focusZoom: 1
   };
