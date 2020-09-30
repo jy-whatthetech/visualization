@@ -134,7 +134,8 @@ const Graph = ({
     },
     link: {
       color: "blue",
-      renderLabel: getTypeConfig(inputType).weighted
+      renderLabel: getTypeConfig(inputType).weighted,
+      type: selectedLayout === LayoutType.Arc ? "CURVE_SMOOTH" : "STRAIGHT"
     },
     focusZoom: 1
   };

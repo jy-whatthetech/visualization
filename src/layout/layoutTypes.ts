@@ -1,10 +1,12 @@
 import { InputType } from "../parser/inputTypes";
 import { layoutTree } from "./treeLayout";
+import { layoutArc } from "./arcLayout";
 import { MyDataType } from "../App";
 
 export enum LayoutType {
   Tree,
   TopologicalSort,
+  Arc,
   ForceLayout
 }
 
@@ -16,6 +18,8 @@ export function getLayoutLabel(type: number) {
       return "Force-Directed";
     case LayoutType.TopologicalSort:
       return "Topological Sort";
+    case LayoutType.Arc:
+      return "Arc";
     default:
       return "Error Label";
   }
@@ -42,6 +46,8 @@ export function performLayout(layoutType: number, data: MyDataType, inputType: n
   switch (layoutType) {
     case LayoutType.Tree:
       return layoutTree(data, inputType);
+    case LayoutType.Arc:
+      return layoutArc(data);
     case LayoutType.ForceLayout:
       // Handled within Graph.tsx
       return;
