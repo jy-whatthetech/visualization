@@ -7,7 +7,8 @@ export enum LayoutType {
   Tree,
   TopologicalSort,
   Arc,
-  ForceLayout
+  ForceLayout,
+  Random
 }
 
 export function getLayoutLabel(type: number) {
@@ -20,6 +21,8 @@ export function getLayoutLabel(type: number) {
       return "Topological Sort";
     case LayoutType.Arc:
       return "Arc";
+    case LayoutType.Random:
+      return "Random";
     default:
       return "Error Label";
   }
@@ -31,6 +34,7 @@ export function getDefaultLayout({ inputType, data, directed, customNodes, start
     case InputType.WeightedEdgePairs:
     case InputType.AdjacencyList:
     case InputType.AdjacencyMatrix:
+      return LayoutType.Arc;
     case InputType.GraphObject:
       return LayoutType.ForceLayout;
     case InputType.BinaryTreeObject:
