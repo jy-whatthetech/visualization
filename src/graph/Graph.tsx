@@ -4,6 +4,7 @@ import { getTypeConfig } from "../parser/inputTypes";
 import * as Utils from "../utils/utils";
 import * as LayoutUtils from "../layout/layoutUtils";
 import { performLayout, LayoutType } from "../layout/layoutTypes";
+import { Typography } from "@material-ui/core";
 
 export const DEFAULT_LEFT_PADDING = 100;
 export const DEFAULT_RIGHT_PADDING = 100;
@@ -87,8 +88,14 @@ const Graph = ({
 
   // generate random positions by default (for testing purposes only)
   for (let n of data.nodes) {
-    n.x = Utils.randomInRange(DEFAULT_LEFT_PADDING * 1.5, graphPaneWidth - DEFAULT_LEFT_PADDING * 1.5);
-    n.y = Utils.randomInRange(DEFAULT_TOP_PADDING * 1.5, graphPaneHeight - DEFAULT_TOP_PADDING * 1.5);
+    n.x = Utils.randomInRange(
+      DEFAULT_LEFT_PADDING * 1.5,
+      graphPaneWidth - DEFAULT_LEFT_PADDING * 1.5
+    );
+    n.y = Utils.randomInRange(
+      DEFAULT_TOP_PADDING * 1.5,
+      graphPaneHeight - DEFAULT_TOP_PADDING * 1.5
+    );
   }
 
   // add nodes from customNodes that don't already exist
@@ -118,7 +125,14 @@ const Graph = ({
   // run layout on all connectd components
   data.startNode = startNode;
   data.directed = directed;
-  performLayout(selectedLayout, data, inputType);
+  const layoutResult = performLayout(selectedLayout, data, inputType);
+  if (typeof layoutResult === "string") {
+    return (
+      <Typography color="secondary" variant="h6">
+        {layoutResult}
+      </Typography>
+    );
+  }
 
   const myConfig = {
     nodeHighlightBehavior: true,

@@ -1,6 +1,7 @@
 import { InputType } from "../parser/inputTypes";
 import { layoutTree } from "./treeLayout";
 import { layoutArc } from "./arcLayout";
+import { layoutTopoSort } from "./topologicalSort";
 import { MyDataType } from "../App";
 
 export enum LayoutType {
@@ -50,9 +51,14 @@ export function performLayout(layoutType: number, data: MyDataType, inputType: n
   switch (layoutType) {
     case LayoutType.Tree:
       return layoutTree(data, inputType);
+    case LayoutType.TopologicalSort:
+      return layoutTopoSort(data);
     case LayoutType.Arc:
       return layoutArc(data);
     case LayoutType.ForceLayout:
+      // Handled within Graph.tsx
+      return;
+    case LayoutType.Random:
       // Handled within Graph.tsx
       return;
     default:
