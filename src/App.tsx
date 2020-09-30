@@ -28,7 +28,29 @@ import { LabelWithTooltip, ColorButton, SelectedButton } from "./utils/helperCom
 import { TreeNode } from "./layout/treeLayout";
 import SearchBar from "material-ui-search-bar";
 
-const DEFAULT_GRAPH_INPUT = "[5,4,7,3,null,2,null,-1,null,9]";
+const DEFAULT_INPUT_TYPE = InputType.EdgePairs;
+const DEFAULT_LAYOUT_TYPE = LayoutType.Arc;
+const DEFAULT_GRAPH_INPUT = `[
+  ['DSM', 'ORD'],
+  ['ORD', 'BGI'],
+  ['BGI', 'LGA'],
+  ['SIN', 'CDG'],
+  ['CDG', 'SIN'],
+  ['CDG', 'BUD'],
+  ['DEL', 'DOH'],
+  ['DEL', 'CDG'],
+  ['TLV', 'DEL'],
+  ['EWR', 'HND'],
+  ['HND', 'ICN'],
+  ['HND', 'JFK'],
+  ['ICN', 'JFK'],
+  ['JFK', 'LGA'],
+  ['EYW', 'LHR'],
+  ['LHR', 'SFO'],
+  ['SFO', 'SAN'],
+  ['SFO', 'DSM'],
+  ['SAN', 'EYW']
+]`;
 const DEFAULT_CUSTOM_NODES_INPUT = "";
 
 export type MyGraphNodeType = { id: string; label: string; x?: number; y?: number };
@@ -50,7 +72,7 @@ function App() {
 
   // input data
   const [inputValue, setInputValue] = React.useState(DEFAULT_GRAPH_INPUT);
-  const [comboValue, setComboValue] = React.useState(InputType.LeetcodeTree);
+  const [comboValue, setComboValue] = React.useState(DEFAULT_INPUT_TYPE);
   const [directed, setDirected] = React.useState(true);
   const [oneIndexed, setOneIndexed] = React.useState(false); // used for adjacency lists
   const [reverseEdges, setReverseEdges] = React.useState(false); // used for edge pairs
@@ -74,7 +96,7 @@ function App() {
   });
 
   // layout
-  const [selectedLayout, setSelectedLayout] = React.useState(LayoutType.Tree);
+  const [selectedLayout, setSelectedLayout] = React.useState(DEFAULT_LAYOUT_TYPE);
   const [searchInputValue, setSearchInputValue] = React.useState("");
   const [searchText, setSearchText] = React.useState("");
 

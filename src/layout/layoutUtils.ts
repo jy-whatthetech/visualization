@@ -163,3 +163,19 @@ export function isStartNodeInComponent(startNode: string, nodes: Array<MyGraphNo
   }
   return false;
 }
+
+// used for undirected graphs: remove links that are backlinks of another edge
+export function removeRepeatedEdges(links: Array<MyGraphLinkType>) {
+  let seen = new Set<string>();
+  let rtn = [];
+  for (let link of links) {
+    let key = link.source + "-linkTo-" + link.target;
+    let backKey = link.target + "-linkTo-" + link.source;
+    if (seen.has(backKey)) {
+      continue;
+    }
+    seen.add(key);
+    rtn.push(link);
+  }
+  return rtn;
+}

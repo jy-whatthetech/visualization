@@ -80,15 +80,15 @@ const Graph = ({
       }
     }
     setOldToNewId(currIdMap);
-  }, [data, customNodes, selectedLayout]);
+  }, [data, customNodes, selectedLayout, startNode]);
 
   const graphPaneHeight = dimensions.height - 120;
   const graphPaneWidth = drawerOpen ? dimensions.width - 350 : dimensions.width - 50;
 
   // generate random positions by default (for testing purposes only)
   for (let n of data.nodes) {
-    n.x = Utils.randomInRange(DEFAULT_LEFT_PADDING, graphPaneWidth);
-    n.y = Utils.randomInRange(DEFAULT_TOP_PADDING, graphPaneHeight);
+    n.x = Utils.randomInRange(DEFAULT_LEFT_PADDING * 1.5, graphPaneWidth - DEFAULT_LEFT_PADDING * 1.5);
+    n.y = Utils.randomInRange(DEFAULT_TOP_PADDING * 1.5, graphPaneHeight - DEFAULT_TOP_PADDING * 1.5);
   }
 
   // add nodes from customNodes that don't already exist
@@ -164,7 +164,12 @@ const Graph = ({
     }
   }
 
-  for (let link of data.links) {
+  let linksToAdd = data.links;
+  if (directed === false) {
+    linksToAdd = LayoutUtils.removeRepeatedEdges(data.links);
+  }
+
+  for (let link of linksToAdd) {
     argLinks.push({
       ...link,
       source: oldToNewId[link.source] || link.source,

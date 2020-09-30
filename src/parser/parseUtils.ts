@@ -40,6 +40,8 @@ function cleanseInput(s: string) {
   s = s.trim();
   if (s.length && s.charAt(0) === `"` && s.charAt(s.length - 1) === `"`) {
     s = s.slice(1, s.length - 1);
+  } else if (s.length && s.charAt(0) === `'` && s.charAt(s.length - 1) === `'`) {
+    s = s.slice(1, s.length - 1);
   }
   return s;
 }
