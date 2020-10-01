@@ -218,7 +218,7 @@ function App() {
               onCancelSearch={() => setSearchText("")}
               placeholder={"Search Nodes"}
               style={{
-                width: 200,
+                width: 180,
                 height: 36
               }}
             />
