@@ -6,7 +6,7 @@
 <h4 align="center">
   Convert graphs and trees from their text-based representation into intuitive visual layouts.
 </h4>
-<img height="430" src="./screenshots/NaryTree.PNG" alt="Icon" />
+<img height="400" src="./screenshots/NaryTree.PNG" alt="Icon" />
 
 ## :exclamation: About
 
@@ -17,7 +17,7 @@ Gee Vis is a graph visualization tool that receives user input in various common
 ## :mag_right: Features
 
 ### User Input
-The tool supports the parsing of most of the commonly-used graph and tree formats. The syntax for Arrays and Matrices is the same as Javascript Arrays (or Python Lists): comma separated elements enclosed in square brackets. Spacing and newlines outside node names does not matter, and quotes around a node name will automatically be stripped during parsing.
+The tool supports most commonly-used graph and tree formats. The syntax for Arrays and Matrices is the same as Javascript Arrays (or Python Lists): comma separated elements enclosed in square brackets. Spacing and newlines outside node names does not matter, and quotes around a node name will automatically be stripped during parsing.
 
 There will be some basic input validation such as making sure brackets are matched, edges in Edge Lists have length 2, JSON syntax is valid, etc. Validation errors will be shown in red under the text field.
 
@@ -66,7 +66,19 @@ In addition, the user can optionally select a start node out of the list of node
 #### Custom Node List
 The Custom Node List is an optional field which is only used when there is a separate list of nodes to describe the graph along with what was passed into the Graph Input. For example, this could be the case for a graph that describes airport connections - where there is an Edge List to describe airline routes, and a separate list to describe all  available airports. 
  - Example: `["BGI","CDG","DEL","DOH","DSM"]`
+ 
 
+## :bulb: Inspiration
+In addition to the DFS, BFS, and Topological sort that is used in the layout algorithms, this project attempts to explore some of the deeper research that has been done on trying to figure out how to draw attractive Trees and Graphs that convey useful information. Here are some of concepts, papers, and algorithms that the implementation of the layouts takes inspiration from:
+
+### Tree Layout
+- [Buchheim Tree Drawing](http://llimllib.github.io/pymag-trees/): While this project's Tree layout algorithm does not implement the Buchheim Tree algorithm exactly, it does apply a lot of concepts described in this article to draw proportional and consistent trees. In particular, the calculation of contours was crucial in making sure the tree does not get too wide accross.
+
+### Topological Sort
+- Ignoring or internally breaking cycles - While the canonical definition of topological sort does not apply to graphs with cycles, the project attempts to follow some of the research that has been done on how to ignore cycles when performing a "best effort" topological traversal.
+
+### Arc Layout
+- Minimizing the crossing of edges - the idea of crossing minimization [is NP-hard](https://en.wikipedia.org/wiki/Arc_diagram#Minimizing_crossings), so it was not possible to come up with an optimal solution that would also scale well for large graphs. Instead, this project uses some clever DFS to avoid line crossings for entire subgraphs, and then runs a brute force algorithm on the smaller subgraphs to find the minimum line crossing for that particular subgraph. 
 
 ## :computer: Technologies
 
