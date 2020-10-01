@@ -160,7 +160,9 @@ const Graph = ({
       color: "lightgreen",
       size: 420,
       labelPosition: "center",
-      labelProperty: "label" as any
+      labelProperty: "label" as any,
+      fontWeight: "bold",
+      fontSize: 9
     },
     link: {
       color: "blue",

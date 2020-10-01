@@ -29,7 +29,7 @@ import { LabelWithTooltip, ColorButton, SelectedButton } from "./utils/helperCom
 import { TreeNode } from "./layout/treeLayout";
 import SearchBar from "material-ui-search-bar";
 
-const DEFAULT_INPUT_TYPE = InputType.EdgePairs;
+const DEFAULT_INPUT_TYPE = InputType.AdjacencyList;
 const DEFAULT_LAYOUT_TYPE = LayoutType.Tree;
 const DEFAULT_GRAPH_INPUT = ``;
 const DEFAULT_CUSTOM_NODES_INPUT = "[]";
