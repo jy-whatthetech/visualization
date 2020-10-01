@@ -12,10 +12,14 @@
 
 Gee Vis is a graph visualization tool that receives user input in various commonly used graph and tree formats, and generates well-proportioned and visually intuitive layouts based on different graph layout algorithms. The UI is simple but flexible, providing basic validation on improper input syntax, as well as a handful of configuration options to aid in the user experience.
 
+[Video Demo](https://www.youtube.com/watch?v=v4YOC_g8ABA)
+
 ## :mag_right: Features
 
 ### User Input
-The tool supports the parsing of most of the commonly-used graph and tree formats. The text in Graph Input text field will be parsed according the the selected input format. There will be some basic input validation such as making sure edges in an Edge List have length 2, JSON syntax is valid, brackets are matched, etc. Validation errors will be shown in red under the text field. Spacing and newlines outside node names does not matter, and quotes around a node name will automatically be stripped during parsing. 
+The tool supports the parsing of most of the commonly-used graph and tree formats. The syntax for Arrays and Matrices is the same as Javascript Arrays (or Python Lists): comma separated elements enclosed in square brackets. Spacing and newlines outside node names does not matter, and quotes around a node name will automatically be stripped during parsing.
+
+There will be some basic input validation such as making sure brackets are matched, edges in Edge Lists have length 2, JSON syntax is valid, etc. Validation errors will be shown in red under the text field.
 
 #### Supported input formats:
 - [Adjacency List](https://en.wikipedia.org/wiki/Adjacency_list) - Example: `[[2, 3], [3], [1], []]`
@@ -26,7 +30,7 @@ The tool supports the parsing of most of the commonly-used graph and tree format
 - Weighted Edge List - similar to Edge List, but with an additional element in each edge definition to specify the weight of the edge. The resulting graph will be drawn with labels on the edges. Example: `[[0,1,3],[1,2,1],[1,3,4],[2,3,1]]`
 - [Binary Heap Array](https://en.wikipedia.org/wiki/Binary_heap#Heap_implementation) - Example: `[1,3,6,5,9,8]`
 - [Array serialization of a tree](https://support.leetcode.com/hc/en-us/articles/360011883654-What-does-1-null-2-3-mean-in-binary-tree-representation-) - Example: `[5,1,4,null,null,3,6]`
-- JSON Graph Object - `nodes` attribute is an array where each node has an `id` and a list of `children`. In addition the JSON object can have an optional `startNode` attribute, to specify the starting node of the graph. Example:
+- JSON Graph Object - `nodes` attribute is an array where each node has an `id`, `value`, and list of `children`. In addition, the JSON object can optionally have a `startNode` attribute, to specify the starting node of the graph (see Start Node below). Example:
 ```
   {
     "nodes": [
@@ -45,7 +49,7 @@ The tool supports the parsing of most of the commonly-used graph and tree format
     "startNode": "A"
   }
 ```
-- JSON Tree Object - similar JSON Graph, but nodes have `left` and `right` properties instead of `children`. Also, `startNode` is renamed to `root`. Example:
+- JSON Tree Object - similar to JSON Graph, but nodes have `left` and `right` properties instead of `children`. Also, `startNode` is renamed to `root`. Example:
 ```
 {
   "nodes": [
@@ -57,30 +61,11 @@ The tool supports the parsing of most of the commonly-used graph and tree format
  ```
  
 #### Start Node
-In addition, the user can optionally select a start node out of the list of nodes in the graph, and the layout algorithm will prioritize putting that node at the front of the layout.
+In addition, the user can optionally select a start node out of the list of nodes in the graph - if specified, the layout algorithm will prioritize putting that node at the front of the layout.
 
 #### Custom Node List
 The Custom Node List is an optional field which is only used when there is a separate list of nodes to describe the graph along with what was passed into the Graph Input. For example, this could be the case for a graph that describes airport connections - where there is an Edge List to describe airline routes, and a separate list to describe all  available airports. 
- - Example format: `[
-    "BGI",
-    "CDG",
-    "DEL",
-    "DOH",
-    "DSM",
-    "EWR",
-    "EYW",
-    "HND",
-    "ICN",
-    "JFK",
-    "LGA",
-    "LHR",
-    "ORD",
-    "SAN",
-    "SFO",
-    "SIN",
-    "TLV",
-    "BUD"
-  ]`
+ - Example: `["BGI","CDG","DEL","DOH","DSM"]`
 
 
 ## :computer: Technologies
