@@ -67,6 +67,35 @@ In addition, the user can optionally select a start node out of the list of node
 The Custom Node List is an optional field which is only used when there is a separate list of nodes to describe the graph along with what was passed into the Graph Input. For example, this could be the case for a graph that describes airport connections - where there is an Edge List to describe airline routes, and a separate list to describe all  available airports. 
  - Example: `["BGI","CDG","DEL","DOH","DSM"]`
  
+ 
+## Layout
+Once the Graph Input is entered, the layout will be automatically generated based on the selected layout type. Each layout type will run a best-effort approach regardless of structure of graph that is provided; however, there will obviously be some types of graphs that will work better with certain layout types (i.e. a graph with a ton of cycles might not work well with Tree layout type).
+
+### Supported Layout Types:
+- Tree - Will run a modified [Buchheim tree layout algorithm](http://dirk.jivas.de/papers/buchheim02improving.pdf) to produce a tree with the following properties:
+  - Edges of the tree should not cross each other
+  - All nodes at the same depth should be drawn on the same horizontal line.
+  - The tree should be drawn as narrowly as possible.
+  - Parents nodes should be centered over their children.
+  - A subtree should be drawn the same no matter where in the tree it lies.
+  - In addition, for Input Types that describe a binary tree, child branches will always be drawn at an angle to respect the 'left' and 'right' child properties of that child. 
+- Topological Sort - Runs a modified topological sort on the graph and tries to break cycles (if they exist). Nodes of the same "level" will be placed in the same horizontal column of the layout. Nodes with backlinks will be placed so that the backlink does not overlap with an existing forward edge. Note: If the graph contains cycles such that no start node can be inferred, the layout will not be run and an error message will be shown instead.
+- Arc - A type of layout where nodes are all aligned and the edges are drawn as arcs. This layout type will try to optimize the node ordering to minimize the number of edge crossings in the graph.
+- Force-Directed - Uses the D3 library's [force layout](https://www.d3indepth.com/force-layout/) implementation. Nodes and links are treated as objects and a physics based simulation is run to determine the resulting node positions.
+- Random - Nodes will be placed randomly on the canvas.
+
+### Note on Disconnected Graphs:
+Sometimes a graph can consist of mutliple disconnected components. In such case, the layout algorithm will be run on each connected component and the resulting subgraphs will be layed out next to each other. Lone nodes will be placed in the upper right corner (to reduce clutter).
+ 
+
+### Layout Canvas Interactions:
+The layout canvas is responsive to window resizing and supports the following interactions:
+- **Panning:** Click anywhere on the canvas background and drag
+- **Zooming:** Zoom in and out using the mouse scroll wheel
+- **Adjusting Node Spacing:** Adjust the horizontal and vertical spacing between nodes using the "Horizontal Spacing" and "Vertical Spacing" sliders in the upper right hand corner (only applies to certain layout types)
+- **Manually rearranging nodes:** Drag and drop nodes to manually reposition them
+- **Node Search:** Search for a specific node using the search bar in the upper right hand corner (press the Enter key in the search bar to execute search). Search is case-insensitive, but requires an exact match on the label of a node. If a match is found, the node will be centered on the canvas and will be highlighted red.
+ 
 
 ## :bulb: Inspiration
 In addition to the DFS, BFS, and Topological sort that is used in the layout algorithms, this project attempts to explore some of the deeper research that has been done on trying to figure out how to draw attractive Trees and Graphs that convey useful information. Here are some of concepts, papers, and algorithms that the implementation of the layouts takes inspiration from:
